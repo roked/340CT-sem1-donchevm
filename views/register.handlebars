@@ -1,0 +1,38 @@
+
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Create an Account</title>
+		<meta name="description" content="form to add new books">
+		<meta name="author" content="Mark Tyers">
+		<link href="{{host}}/style.css" type="text/css" rel="stylesheet" />
+	</head>
+	<body>
+		<header>
+		<h1>Create an Account</h1>
+		<a href="/login">Log in</a>
+		</header>
+		{{#if msg}}
+ 			<p class="msg">{{msg}}</p>
+		{{/if}}
+		<main>
+		<form action="/register" enctype="multipart/form-data" method="post">
+			<p>
+				<label for="user">Username</label><br />
+				<input type="text" name="user" placeholder="your preferred username (no spaces)" value="{{body.user}}">
+			</p>
+			<p>
+				<label for="pass">Password</label><br />
+				<input type="password" name="pass" placeholder="your chosen password" value="{{body.pass}}">
+			</p>
+			<p>
+				<label for="email">Email</label><br />
+				<input type="email" name="email" placeholder="a valid email address" value="{{body.email}}">
+			</p>
+			<p><input type="submit" value="Create"></p>
+		</form>
+		</main>
+	</body>
+</html>

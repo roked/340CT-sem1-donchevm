@@ -1,0 +1,229 @@
+
+body {
+		font-family: Arial, Helvetica, sans-serif;
+		margin: 0;
+	}
+
+/* formats the red message boxes */
+.msg {
+	border: 1px solid red;
+	font-weight: bold;
+	color: red;
+	padding: 1em;
+	margin: 2em;
+}
+
+header {
+	background-color: #ccc;
+	border-bottom: 5px solid grey;
+	height: 8vw;
+}
+
+h1, h2, h3 {
+	margin: 0;
+	padding: 0;
+	color: #444;
+}
+
+h1 {
+	padding: 2.6vw;
+	float: left;
+	font-size: 3vw;
+	margin-left: 6vw;
+}
+
+h2 {
+	font-size: 2.5vw;
+	margin: 1vw;
+	margin-left: 0.6vw;
+}
+
+h3 {
+	font-size: 2vw;
+	margin: 1vw;
+	margin-left: 0.6vw;
+}
+
+header > a {
+	margin-top: 3vw;
+	margin-right: 3vw;
+	float: right;
+	font-size: 1.3vw;
+}
+
+header > img {
+	width: 7vw;
+	border-radius: 50%;
+	position: absolute;
+	left: 0.5vw;
+	top: 0.5vw;
+}
+
+p, legend {
+	font-size: 1.5vw;
+}
+
+main {
+	width: 100%;
+	margin-left: 3vw;
+	/* background-color: pink; */
+}
+
+article {
+	width: 50vw;
+	/* background-color: grey;
+	float: left; */
+}
+
+aside {
+	/* background-color: yellow;
+	float: right; */
+	width: 50vw;
+}
+
+main a {
+	color: black;
+	text-decoration: underline;
+}
+
+main a:hover {
+	color: red;
+	text-decoration: none;
+}
+
+section {
+	background-color: #DDD;
+	width: 24vw;
+	margin-top: 1vw;
+	padding: 1vw;
+	border-radius: 1vw;
+}
+
+section > p {
+	margin: 0;
+	padding: 0;
+	margin-bottom: 0.5vw;
+}
+
+section > h3 {
+	margin: 0;
+	padding: 0;
+	font-size: 1.8vw;
+}
+
+small {
+	display: block;
+	text-align: right;
+}
+
+/* ===== FORMS ===== */
+
+fieldset {
+	position: relative;
+	width: 25vw;
+	border: 1px solid #CCC;
+	padding-top: 4vw;
+}
+
+legend {
+	position:absolute;
+  top:0;
+	left:0;
+	width: 25.5vw;
+	background-color: #ccc;
+	border-bottom: 5px solid grey;
+	padding: 0.6vw;
+}
+
+input[type="file"] {
+	display: none;
+}
+
+input[type="submit"], header > a, .custom-file-upload {
+  background-color: grey;
+  border: 2px solid grey;
+  color: white;
+	padding: 0.4vw 0.8vw;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+	font-size: 1.5vw;
+	/* border-radius: 0.6vw; */
+}
+
+input[type="submit"]:hover, header > a:hover, .custom-file-upload:hover {
+  color: grey;
+  background-color: white;
+}
+
+input[type="text"], input[type="email"], input[type="password"], textarea, select {
+	font-size: 1.5vw;
+	width: 25vw;
+	border: 1px solid #CCC;
+	padding: 0.5vw;
+	/* margin-bottom: 1vw; */
+	/* border-radius: 0.6vw; */
+}
+
+textarea {
+	height: 10vw;
+	resize: none;
+}
+
+select {
+	width: 26.3vw;
+	-webkit-appearance: none;
+	-webkit-border-radius: 0px;
+}
+
+form > br {
+	line-height: 3vw;
+}
+
+dl {
+  width: 35vw;
+  overflow: hidden;
+  /* background: #ff0; */
+  padding: 0;
+	margin: 0;
+	font-size: 1.5vw;
+}
+dt {
+  float: left;
+  width: 10.5vw;
+  /* adjust the width; make sure the total of both is 100% */
+  /* background: #cc0; */
+  padding: 0.5vw;
+  margin: 0
+}
+dd {
+  float: left;
+  width: 21vw;
+  /* adjust the width; make sure the total of both is 100% */
+	/* background: #dd0; */
+	padding: 0.5vw;
+  margin: 0
+}
+
+/* ===== TABLES ===== */
+
+table {
+	/* border: 1px solid grey; */
+	border-collapse: collapse;
+}
+
+tr:nth-child(odd) {
+	background: #DDD;
+}
+
+td {
+	/* border: 1px solid grey; */
+	padding: 0.5vw;
+	font-size: 1.5vw;
+	width: 25vw;
+}
+
+td:last-child {
+	width: 10vw;
+	text-align: right;
+}

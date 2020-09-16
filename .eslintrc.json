@@ -1,0 +1,77 @@
+
+{
+	"env": {
+		"es6": true,
+		"jasmine": true,
+		"node": true,
+		"browser": true,
+		"jest": true
+	},
+	"parserOptions": {
+		"ecmaVersion": 2018,
+		"noInlineConfig": true,
+		"reportUnusedDisableDirectives": true,
+		"sourceType": "module"
+	},
+	"rules": {
+		"arrow-body-style": "error",
+		"arrow-spacing": ["warn", {"before": true, "after": true}],
+		"brace-style": "error",
+		"camelcase": ["error", {"properties": "never"}],
+		"complexity": ["error", 5],
+		"eol-last": "warn",
+		"eqeqeq": "error",
+		"func-call-spacing": ["error", "never"],
+		"global-require": "error",
+		"handle-callback-err": "warn",
+		"indent": ["warn", "tab", {"SwitchCase": 1}],
+		"key-spacing": ["error", {"beforeColon": false, "afterColon": true}],
+		"linebreak-style": ["warn", "unix"],
+		"max-depth": ["error", 3],
+		"max-len": ["warn", { "code": 120, "tabWidth": 4 }],
+		"max-lines": ["warn", {"max": 150, "skipBlankLines": true, "skipComments": true}],
+		"max-lines-per-function": ["warn", {"max": 20, "skipBlankLines": true, "skipComments": true}],
+		"max-nested-callbacks": ["error", 4],
+		"max-params": ["error", 5],
+		"max-statements": ["error", 20],
+		"no-cond-assign": "error",
+		"no-dupe-args": "error",
+		"no-dupe-keys": "error",
+		"no-duplicate-case": "error",
+		"no-empty": "warn",
+		"no-empty-function": "error",
+		"no-multiple-empty-lines": "warn",
+		"no-extra-parens": "error",
+		"no-func-assign": "error",
+		"no-irregular-whitespace": "error",
+		"no-magic-numbers": ["warn", {"ignore": [-1, 0, 1]}],
+		"no-multi-spaces": "warn",
+		"no-multi-str": "off",
+		"no-unexpected-multiline": "error",
+		"no-unreachable": "error",
+		"no-self-assign": "error",
+		"no-trailing-spaces": "warn",
+		"no-undef": "error",
+		"no-unused-vars": "warn",
+		"no-var": 2,
+		"prefer-arrow-callback": "warn",
+		"prefer-const": "error",
+		"prefer-template": "error",
+		"quotes": ["warn", "single"],
+		"semi": ["warn", "never"],
+		"space-before-blocks": ["error", { "functions": "always", "keywords": "always", "classes": "always" }],
+		"space-before-function-paren": ["error", "never"],
+		"strict": ["error", "global"],
+		"yoda": "error"
+	},
+	"overrides": [{
+		"files": [ "test-*.js" ],
+		"rules": {
+			"global-require": "off",
+			"max-lines-per-function": "off",
+			"max-lines": "off",
+			"max-statements": "off",
+			"no-magic-numbers": "off"
+		}
+	}]
+}

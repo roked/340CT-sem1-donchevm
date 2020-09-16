@@ -1,0 +1,31 @@
+
+.DS_Store
+node_modules/
+coverage/
+screenshots/*
+docs/
+
+data/
+coverage/
+sessions/
+screenshots/
+__image_snapshots_/
+__diff_output__/
+trace/
+.node-persist/
+
+*.db
+*snap.png
+*diff.png
+*trace.json
+*.0x
+
+config.json 
+#Should probably be re-added
+#Or at least provide documentation on how to populate
+
+*.pptx
+*.mp4
+
+*.codio
+*.c9
