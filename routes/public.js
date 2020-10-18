@@ -4,17 +4,21 @@ import Router from 'koa-router'
 const publicRouter = new Router()
 
 import { Accounts } from '../modules/accounts.js'
+import { Issues } from '../modules/issues.js'
 const dbName = 'website.db'
 
 /**
- * The public home page.
+ * The public home page, it shows all issues.
  *
  * @name Home Page
  * @route {GET} /
  */
 publicRouter.get('/', async ctx => {
 	try {
-		await ctx.render('index', ctx.hbs)
+    const issue = await new Issues(dbName)
+    const issues = await issue.getAllIssues()
+    console.log(issues)
+		await ctx.render('index', {issues: issues}, ctx.hbs)
 	} catch(err) {
 		await ctx.render('error', ctx.hbs)
 	}

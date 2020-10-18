@@ -41,7 +41,7 @@ class Issues {
 	 */
 	async getAllIssues() {
 		let sql = `SELECT * FROM issues;`
-		const record = await this.db.get(sql)
+		const record = await this.db.all(sql)
 		if(!record) throw new Error(`not existing issues yet`)
 		return record
 	}
@@ -56,6 +56,17 @@ class Issues {
 		const record = await this.db.get(sql)
 		if(!record) throw new Error(`not existing information for issue with ID: "${id}"`)
 		return record
+	}
+  
+  /**
+	 * clear the DB after tasting
+	 * @returns {Boolean} true if the db is clear
+	 */
+	async delleteAll() {
+		let sql = `DROP TABLE issues;`
+		const record = await this.db.run(sql)
+		if(record) throw new Error(`Something went wrong!`)
+		return true
 	}
 
 	async close() {

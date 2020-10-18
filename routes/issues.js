@@ -55,9 +55,9 @@ issuesRouter.post('/new', async ctx => {
  */
 async function getFile(ctx){
   const image = ctx.request.files.image
-  if(image.size === 0) return 'no image'
+  if(image.size === 0) return 'default.png'
   try {
-    await fs.copy(image.path, `uploads/${image.name}`)
+    await fs.copy(image.path, `public/uploads/${image.name}`)
     return image.name
   } catch(err) {
     console.log(err.message)
