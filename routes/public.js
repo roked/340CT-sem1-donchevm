@@ -1,15 +1,13 @@
 
 import Router from 'koa-router'
-import bodyParser from 'koa-body'
 
 const publicRouter = new Router()
-publicRouter.use(bodyParser({multipart: true}))
 
 import { Accounts } from '../modules/accounts.js'
 const dbName = 'website.db'
 
 /**
- * The secure home page.
+ * The public home page.
  *
  * @name Home Page
  * @route {GET} /
@@ -21,7 +19,6 @@ publicRouter.get('/', async ctx => {
 		await ctx.render('error', ctx.hbs)
 	}
 })
-
 
 /**
  * The user registration page.

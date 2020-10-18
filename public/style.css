@@ -136,7 +136,7 @@ legend {
 }
 
 input[type="file"] {
-	display: none;
+
 }
 
 input[type="submit"], header > a, .custom-file-upload {
@@ -172,7 +172,6 @@ textarea {
 
 select {
 	width: 26.3vw;
-	-webkit-appearance: none;
 	-webkit-border-radius: 0px;
 }
 

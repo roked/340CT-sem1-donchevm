@@ -26,6 +26,7 @@
 	"dependencies": {
 		"bcrypt": "^5.0.0",
 		"bcrypt-promise": "^2.0.0",
+		"fs-extra": "^9.0.1",
 		"handlebars": "^4.7.6",
 		"koa": "^2.13.0",
 		"koa-body": "^4.2.0",
@@ -33,6 +34,7 @@
 		"koa-session": "^6.0.0",
 		"koa-static": "^5.0.0",
 		"koa-views": "^6.3.0",
+		"mime-types": "^2.1.27",
 		"node-pre-gyp": "^0.15.0",
 		"nodemon": "^2.0.4",
 		"sqlite-async": "^1.1.0"

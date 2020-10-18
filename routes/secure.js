@@ -3,6 +3,12 @@ import Router from 'koa-router'
 
 const secureRouter = new Router({ prefix: '/secure' })
 
+/**
+ * The secure home page.
+ *
+ * @name Home Page
+ * @route {GET} /
+ */
 secureRouter.get('/', async ctx => {
 	try {
 		console.log(ctx.hbs)
