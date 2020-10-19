@@ -5,27 +5,60 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Home Page</title>
-		<meta name="description" content="form to add new books">
-		<meta name="author" content="Mark Tyers">
+		<meta name="description" content="home page">
+		<meta name="author" content="Mitko Donchev">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400&display=swap" rel="stylesheet">
 		<link href="{{host}}/style.css" type="text/css" rel="stylesheet" />
+    
+    <script src="https://kit.fontawesome.com/8d479f3417.js" crossorigin="anonymous"></script>
 	</head>
 	<body>
-		<header>
-			<h1>Home</h1>
-			{{#if authorised}}
-				<a href="/logout">Log out</a>
-			{{else}}
-				<a href="/login">Log in</a>
-			{{/if}}
-		</header>
+    <header class="navbar">
+      <div class="container">   
+        <div class="site-branding">
+          <h1 class="site-title">Local Community</h1>
+        </div>
+        <div class="login">
+          {{#if authorised}}
+            <a href="/logout"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
+          {{else}}
+            <a href="/login"><i class="fas fa-sign-in-alt"> Sign In</i></a>
+          {{/if}}
+        </div>
+    </div>
+   </header>
 		{{#if msg}}
  			<p class="msg">{{msg}}</p>
 		{{/if}}
-	<main>
-		<p>This is the home page. Users can see it without logging in.</p>
-		{{#if authorised}}
-			<p><a href="/secure">secure page</a></p>
-		{{/if}}
-	</main>
-	</body>
+ {{#if authorised}}
+	 <p><a href="/secure">secure page</a></p>
+ {{/if}}
+ <main class="main-area">
+  <div class="centered">
+    <section class="cards">
+      {{#each issues}}
+      <article class="card">
+        <a href="#">
+          <figure class="thumbnail">
+            <img src="uploads/{{this.img}}" alt="issue">
+          </figure>
+          <div class="card-content">
+            <h2>{{this.title}}</h2>
+            <p>{{this.description}}</p>
+          </div>
+        </a>
+      </article>
+      {{/each}}
+    </section>
+  </div>
+ </main>
+    
+ <footer class="footer">
+  <div class="container">
+    <p>You reached the end!</p>
+  </div>
+ </footer>
+    
+ </body>
 </html>
