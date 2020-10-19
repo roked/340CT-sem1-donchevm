@@ -36,7 +36,7 @@
 		"koa-views": "^6.3.0",
 		"mime-types": "^2.1.27",
 		"node-pre-gyp": "^0.15.0",
-		"nodemon": "^2.0.4",
+		"nodemon": "^2.0.5",
 		"sqlite-async": "^1.1.0"
 	},
 	"devDependencies": {
