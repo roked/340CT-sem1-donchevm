@@ -3,9 +3,9 @@ import Router from 'koa-router'
 import mime from 'mime-types'
 import fs from 'fs-extra'
 
-import { Issues } from '../modules/issues.js'
+import Issues from '../modules/issues.js'
 
-const issuesRouter = new Router({ prefix: '/issue' })
+const router = new Router({ prefix: '/issue' })
 const dbName = 'website.db'
 
 /**
@@ -14,7 +14,7 @@ const dbName = 'website.db'
  * @name Add new issue 
  * @route {GET} /
  */
-issuesRouter.get('/new', async ctx => {
+router.get('/new', async ctx => {
 	try {
 		await ctx.render('new', ctx.hbs)
 	} catch(err) {
@@ -28,7 +28,7 @@ issuesRouter.get('/new', async ctx => {
  * @name Issue Script
  * @route {POST} /register
  */
-issuesRouter.post('/new', async ctx => {
+router.post('/new', async ctx => {
 	const issue = await new Issues(dbName)
 	try {
     const image = await getFile(ctx)
@@ -64,4 +64,4 @@ async function getFile(ctx){
   } 
 }
 
-export { issuesRouter }
+export default router 

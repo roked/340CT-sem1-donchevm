@@ -74,4 +74,4 @@ class Issues {
 	}
 }
 
-export { Issues }
+export default Issues
