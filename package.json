@@ -14,8 +14,6 @@
 		]
 	},
 	"scripts": {
-		"packagedeps": "./node_modules/.bin/depcheck .",
-		"dependency": "./node_modules/.bin/dependency-check -i bcrypt --unused --no-dev . && node_modules/.bin/dependency-check --missing .",
 		"start": "node index.js",
 		"jsdoc": "node_modules/.bin/jsdoc -c jsdoc.conf",
 		"linter": "node_modules/.bin/eslint .",
@@ -36,7 +34,7 @@
 		"koa-views": "^6.3.0",
 		"mime-types": "^2.1.27",
 		"node-pre-gyp": "^0.15.0",
-		"nodemon": "^2.0.4",
+		"nodemon": "^2.0.5",
 		"sqlite-async": "^1.1.0"
 	},
 	"devDependencies": {

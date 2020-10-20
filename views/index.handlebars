@@ -28,16 +28,14 @@
         </div>
     </div>
    </header>
-		{{#if msg}}
- 			<p class="msg">{{msg}}</p>
-		{{/if}}
- {{#if authorised}}
-	 <p><a href="/secure">secure page</a></p>
- {{/if}}
  <main class="main-area">
   <div class="centered">
+    {{#if authorised}}
+    <a href="/issue/new" class="button">New Issue</a>
+    {{/if}}
     <section class="cards">
       {{#each issues}}
+          
       <article class="card">
         <a href="#">
           <figure class="thumbnail">
@@ -45,10 +43,14 @@
           </figure>
           <div class="card-content">
             <h2>{{this.title}}</h2>
-            <p>{{this.description}}</p>
+            <hr>
+            <p>Located: {{this.location}}</p>
+            <p>Status: {{this.status}}</p>
+            More Info
           </div>
         </a>
       </article>
+            
       {{/each}}
     </section>
   </div>
@@ -56,7 +58,7 @@
     
  <footer class="footer">
   <div class="container">
-    <p>You reached the end!</p>
+    <p>2020 Mitko Donchev. All rights reserved!</p>
   </div>
  </footer>
     

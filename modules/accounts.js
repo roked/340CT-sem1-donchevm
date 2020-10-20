@@ -1,11 +1,20 @@
+/** @module Accounts */
 
 import bcrypt from 'bcrypt-promise'
 import sqlite from 'sqlite-async'
 
 const saltRounds = 10
 
+/**
+ * Accounts
+ * ES6 module that handles registering accounts and logging in.
+ */
 class Accounts {
 
+  /**
+   * Create an account object
+   * @param {String} [dbName=":memory:"] - The name of the database file to use.
+   */
 	constructor(dbName = ':memory:') {
 		return (async() => {
 			this.db = await sqlite.open(dbName)
@@ -21,6 +30,7 @@ class Accounts {
 	 * registers a new user
 	 * @param {String} user the chosen username
 	 * @param {String} pass the chosen password
+	 * @param {String} email the chosen email
 	 * @returns {Boolean} returns true if the new user has been added
 	 */
 	async register(user, pass, email) {
@@ -61,4 +71,4 @@ class Accounts {
 	}
 }
 
-export { Accounts }
+export default Accounts

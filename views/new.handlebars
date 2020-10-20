@@ -7,7 +7,7 @@
 		<title>Add New Issue Page</title>
 		<meta name="description" content="allows logged user to add new issue">
 		<meta name="author" content="Mitko Donchev">
-		<link href="{{host}}/style.css" type="text/css" rel="stylesheet" />
+		<link href="{{host}}/new.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 		<header>
@@ -22,30 +22,32 @@
  			<p class="msg">{{msg}}</p>
 		{{/if}}
 	<main>
-		<p>Please fill the form and submit a new issue.</p>
-    <form method="POST" action="/issue/new" enctype="multipart/form-data">
-      <label>Title:
-        <input type="text" name="title" required/>
-      </label>
-      <label>Location (Post Code):
-        <input type="text" name="location" required/>
-      </label>
-      <label>Description:
-        <textarea name="description" required></textarea>
-      </label>
-      <label> Status:
-        <select name="status" id="stat">
-          <option value="new">New</option>
-          <option value="verified">Verified</option>
-          <option value="resolved">Resolved</option>
-        </select>
-      </label>
-      <label>Image: 
-        <input type="file" name="image" accept=".png, .jpg, .jpeg" />
-      </label>
-      <br>
-      <input type="submit">
-    </form>
+    <div class="contact-us">
+      <p>Please fill the form and submit a new issue.</p>
+      <form method="POST" action="/issue/new" enctype="multipart/form-data">
+        <label>Title:
+          <input type="text" name="title" required/>
+        </label>
+        <label>Location (Post Code):
+          <input type="text" name="location" required/>
+        </label>
+        <label>Description:
+          <textarea name="description" required></textarea>
+        </label>
+        <label> Status:
+          <select name="status" id="stat">
+            <option value="new">New</option>
+            <option value="verified">Verified</option>
+            <option value="resolved">Resolved</option>
+          </select>
+        </label>
+        <label>Image: 
+          <input type="file" name="image" accept=".png, .jpg, .jpeg" />
+        </label>
+        <br>
+        <input type="submit">
+      </form>
+    </div>
 	</main>
 	</body>
 </html>
