@@ -17,8 +17,7 @@ router.get('/', async ctx => {
 	try {
     const issue = await new Issues(dbName)
     const issues = await issue.getAllIssues()
-    console.log(issues)
-		await ctx.render('index', {issues: issues}, ctx.hbs)
+		await ctx.render('index', {issues: issues, authorised: ctx.hbs.authorised})
 	} catch(err) {
 		await ctx.render('error', ctx.hbs)
 	}
@@ -97,8 +96,8 @@ router.post('/login', async ctx => {
 })
 
 router.get('/logout', async ctx => {
-	ctx.session.authorised = null
-	ctx.redirect('/?msg=you are now logged out')
+	ctx.session.authorised = false
+	ctx.redirect('/')
 })
 
 export default router

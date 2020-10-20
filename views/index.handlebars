@@ -28,15 +28,11 @@
         </div>
     </div>
    </header>
-		{{#if msg}}
- 			<p class="msg">{{msg}}</p>
-		{{/if}}
- {{#if authorised}}
-	 <p><a href="/secure">secure page</a></p>
- {{/if}}
  <main class="main-area">
   <div class="centered">
+    {{#if authorised}}
     <a href="/issue/new" class="button">New Issue</a>
+    {{/if}}
     <section class="cards">
       {{#each issues}}
           
