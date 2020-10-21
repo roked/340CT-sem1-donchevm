@@ -4,8 +4,12 @@
   text-align: center;
 }
 
-form {
+.special {
   display: inline-flex;
+}
+
+img {
+  max-width: 45em;
 }
 
 body {

@@ -8,7 +8,7 @@ class Issues {
 			this.db = await sqlite.open(dbName)
 			// we need this table to store the issues
 			const sql = 'CREATE TABLE IF NOT EXISTS issues\
-				(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, location TEXT NOT NULL, des TEXT NOT NULL, status TEXT NOT NULL, img TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP);'
+				(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, location TEXT NOT NULL, des TEXT NOT NULL, status TEXT NOT NULL, img TEXT, author TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP);'
 			await this.db.run(sql)
 			return this
 		})()
@@ -21,16 +21,17 @@ class Issues {
 	 * @param {String} stat the chosen status
 	 * @param {String} des the chosen detailed formatted description.
 	 * @param {String} img the chosen optional image - the name of the file which will be pulled from the server storage.
+	 * @param {String} author - the name of the author of the issue
 	 * @returns {Boolean} returns true if the new issue has been added
 	 */
-	async createIssue(title, loc, des, stat, img) {
+	async createIssue(title, loc, des, stat, img, author) {
 		Array.from(arguments).forEach( val => {
 			if(val.length === 0) throw new Error('missing field')
 		})
 		let sql = `SELECT COUNT(id) as records FROM issues WHERE title="${title}";`
 		const data = await this.db.get(sql)
 		if(data.records !== 0) throw new Error(`Title "${title}" already in use`)
-		sql = `INSERT INTO issues(title, location, des, status, img) VALUES("${title}", "${loc}", "${des}", "${stat}", "${img}")`
+		sql = `INSERT INTO issues(title, location, des, status, img, author) VALUES("${title}", "${loc}", "${des}", "${stat}", "${img}", "${author}")`
 		await this.db.run(sql)
 		return true
 	}

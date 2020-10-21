@@ -26,11 +26,26 @@
             <hr>
             <p>Located: {{issue.location}}</p>
             <p>Status: {{issue.status}}</p> 
-            <form action="/issue/{{issue.id}}?_method=PUT" method="POST">
-              <button>
-                Resolve!
-              </button>
-            </form>
+            {{#unless author}}
+              {{#unless resolving}}
+                {{#unless resolved}}
+                <form class="special" action="/issue/{{issue.id}}?_method=PUT" method="POST">
+                  <button>
+                    Resolve!
+                  </button>
+                </form>
+                {{/unless}}
+              {{/unless}}
+            {{/unless}}
+            {{#if author}}
+              {{#if resolving}}
+                <form class="special" action="/issue/{{issue.id}}?_method=PUT" method="POST">
+                  <button>
+                    Resolved!
+                  </button>
+                </form>
+              {{/if}}
+            {{/if}}
             <p>Description: {{issue.des}}</p>
           </div>
       </article>            
