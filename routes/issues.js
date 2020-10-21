@@ -26,13 +26,15 @@ router.get('/new', async ctx => {
  * The script to post new issue and add it to the DB.
  *
  * @name Issue Script
- * @route {POST} /register
+ * @route {POST} /issue/new
  */
 router.post('/new', async ctx => {
+  //connect with the DB
 	const issue = await new Issues(dbName)
 	try {
+    //get the image from the input
     const image = await getFile(ctx)
-		// call the functions in the module
+		// call the create function in the issue's module
 		await issue.createIssue(ctx.request.body.title, ctx.request.body.location, ctx.request.body.description, ctx.request.body.status, image).then(() => {
       ctx.redirect('/')
     }).catch(err => ctx.hbs.msg = err.message)
@@ -41,6 +43,62 @@ router.post('/new', async ctx => {
 		ctx.hbs.body = ctx.request.body
 		console.log(ctx.hbs)
 		await ctx.render('new', ctx.hbs)
+	} finally {
+		issue.close()
+	}
+})
+
+/**
+ * The script to get an issue using it's ID.
+ *
+ * @name Show Issue Info Script
+ * @route {GET} /issue/:id
+ */
+router.get('/:id', async ctx => {
+  //connect with the DB
+  const issue = await new Issues(dbName)
+  //get the issue id from the request params
+	const {id} = ctx.params
+	try {
+		// call theget info function in the issue's module
+		const issueInfo = await issue.getIssue(id)
+    await ctx.render('issue', {issue: issueInfo})
+	} catch(err) {
+		ctx.hbs.msg = err.message
+		ctx.hbs.body = ctx.request.body
+		console.log(ctx.hbs)
+		await ctx.render('index', ctx.hbs)
+	} finally {
+		issue.close()
+	}
+})
+
+/**
+ * The script to update an issue.
+ *
+ * @name Update Issue Info Script
+ * @route {PUT} /issue/:id
+ */
+router.put('/:id', async ctx => {
+  //connect with the DB
+  const issue = await new Issues(dbName)
+  //get the issue id from the request params
+	const {id} = ctx.params
+	try {
+		// call the get issue function in the issue's module
+		const issueInfo = await issue.getIssue(id)
+    //change the status
+    issueInfo.status = 'resolving'
+    
+    // call the updaet issue function in the issue's module
+		await issue.updateIssue(issueInfo).then(() => {
+      ctx.redirect('/')
+    }).catch(err => ctx.hbs.msg = err.message)
+	} catch(err) {
+		ctx.hbs.msg = err.message
+		ctx.hbs.body = ctx.request.body
+		console.log(ctx.hbs)
+		await ctx.render('index', ctx.hbs)
 	} finally {
 		issue.close()
 	}

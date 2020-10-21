@@ -1,0 +1,41 @@
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Home Page</title>
+		<meta name="description" content="display single issue information">
+		<meta name="author" content="Mitko Donchev">
+		<link href="{{host}}/new.css" type="text/css" rel="stylesheet" />
+	</head>
+	<body>
+		<header>
+    <a href="/logout">Log out</a>
+    <p><a href="/">Home page</a></p>
+		<h1>Issue: {{issue.title}}</h1>
+		</header>
+		<main>
+		<div class="centered">
+    <section class="cards">
+      <article class="card">
+          <figure class="thumbnail">
+            <img src="/uploads/{{issue.img}}" alt="issue">
+          </figure>
+          <div class="card-content">
+            <h2>{{issue.title}}</h2>
+            <hr>
+            <p>Located: {{issue.location}}</p>
+            <p>Status: {{issue.status}}</p> 
+            <form action="/issue/{{issue.id}}?_method=PUT" method="POST">
+              <button>
+                Resolve!
+              </button>
+            </form>
+            <p>Description: {{issue.des}}</p>
+          </div>
+      </article>            
+    </section>
+    </div>
+		</main>
+	</body>
+</html>

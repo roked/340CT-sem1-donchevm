@@ -49,13 +49,25 @@ class Issues {
 	/**
 	 * pull the issue information from the DB
 	 * @param {Integer} id the unique id of the issue
-	 * @returns {Boolean} returns the information
+	 * @returns {Object} returns the information
 	 */
 	async getIssue(id) {
 		let sql = `SELECT * FROM issues WHERE id="${id}";`
 		const record = await this.db.get(sql)
 		if(!record) throw new Error(`not existing information for issue with ID: "${id}"`)
 		return record
+	}
+  
+   /**
+	 * update the issue information
+	 * @param {Object} issue the issue object which contains the updated information
+	 * @returns {Boolean} returns true if everything is fine
+	 */
+	async updateIssue(issue) {
+		let sql = `UPDATE issues SET status="${issue.status}" WHERE id="${issue.id}";`
+		const record = await this.db.run(sql)
+		if(!record) throw new Error(`not existing information for issue with ID: "${id}"`)
+		return true
 	}
   
   /**

@@ -3,6 +3,7 @@ import Koa from 'koa'
 import serve from 'koa-static'
 import views from 'koa-views'
 import session from 'koa-session'
+import methodOverride from 'koa-methodoverride';
 
 import router from './routes/routes.js'
 
@@ -22,6 +23,7 @@ async function getHandlebarData(ctx, next) {
 	await next()
 }
 
+app.use(methodOverride('_method'))
 app.use(serve('public'))
 app.use(session(app))
 app.use(views('views', { extension: 'handlebars' }, {map: { handlebars: 'handlebars' }}))
