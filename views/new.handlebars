@@ -21,7 +21,7 @@
 		{{#if msg}}
  			<p class="msg">{{msg}}</p>
 		{{/if}}
-	<main>
+	<main id="new">
     <div class="contact-us">
       <p>Please fill the form and submit a new issue.</p>
       <form method="POST" action="/issue/new" enctype="multipart/form-data">
@@ -37,7 +37,6 @@
         <label> Status:
           <select name="status" id="stat">
             <option value="new">New</option>
-            <option value="verified">Verified</option>
             <option value="resolved">Resolved</option>
           </select>
         </label>

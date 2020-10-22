@@ -79,7 +79,8 @@ router.get('/:id', async ctx => {
     //check status
     const isResolving = (issueInfo.status === 'resolving') ? true : false
     const isResolved = (issueInfo.status === 'resolved') ? true : false
-    await ctx.render('issue', {issue: issueInfo, author: isOwner, resolving: isResolving, resolved: isResolved})
+    const isVerified = (issueInfo.status === 'verified') ? true : false
+    await ctx.render('issue', {issue: issueInfo, author: isOwner, resolving: isResolving, resolved: isResolved, verified: isVerified})
 	} catch(err) {
 		ctx.hbs.msg = err.message
 		ctx.hbs.body = ctx.request.body
@@ -101,11 +102,14 @@ router.put('/:id', async ctx => {
   const issue = await new Issues(dbName)
   //get the issue id from the request params
 	const {id} = ctx.params
+  //get the status from body if there is one
+  const {status} = ctx.request.body
+  
 	try {
 		// call the get issue function in the issue's module
 		const issueInfo = await issue.getIssue(id)
     //change the status (if it was status resolving - change to resolved)
-    issueInfo.status = (issueInfo.status === 'resolving') ? 'resolved' : 'resolving'   
+    issueInfo.status = (status === 'verified') ? 'verified' : (issueInfo.status === 'resolving') ? 'resolved' : 'resolving'   
     // call the updaet issue function in the issue's module
 		await issue.updateIssue(issueInfo).then(() => {
       ctx.redirect('/')

@@ -44,11 +44,9 @@
             <hr>
             <p>Located: {{this.location}}</p>
             <p>Status: {{this.status}}</p>
-            <p>{{authorised}}</p>
-              {{#if ../authorised}}
-                <a href="/issue/{{this.id}}" class="button">More Info</a>
-              {{/if}}
-   
+            {{#if ../authorised}}
+              <a href="/issue/{{this.id}}" class="button">More Info</a>
+            {{/if}}
           </div>
       </article>
       {{/each}}

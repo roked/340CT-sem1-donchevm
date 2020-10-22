@@ -29,6 +29,20 @@
             {{#unless author}}
               {{#unless resolving}}
                 {{#unless resolved}}
+                  {{#unless verified}}
+                    <form class="special" action="/issue/{{issue.id}}?_method=PUT" method="POST">
+                      <input type="hidden" name="status" value="verified">  
+                      <button>
+                        Verify!
+                      </button>
+                    </form>
+                  {{/unless}}
+                {{/unless}}
+              {{/unless}}
+            {{/unless}}
+            {{#unless author}}
+              {{#unless resolving}}
+                {{#unless resolved}}
                 <form class="special" action="/issue/{{issue.id}}?_method=PUT" method="POST">
                   <button>
                     Resolve!
