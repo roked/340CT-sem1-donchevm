@@ -1,8 +1,7 @@
-
 import Router from 'koa-router'
 import mime from 'mime-types'
 import fs from 'fs-extra'
-import regex from 'regex'
+import fetch from 'node-fetch'
 
 import Issues from '../modules/issues.js'
 
@@ -17,6 +16,7 @@ const dbName = 'website.db'
  */
 router.get('/new', async ctx => {
 	try {
+    await userLocation(ctx)
 		await ctx.render('new', ctx.hbs)
 	} catch(err) {
 		await ctx.render('error', ctx.hbs)
@@ -37,11 +37,13 @@ router.post('/new', async ctx => {
     const {user} = ctx.session
     //get the image from the input
     const image = await getFile(ctx)
-    //check if the postcode is valid
-    const isValid = await validPostcode(ctx.request.body.location)
-    if(!isValid) throw Error('Not vallid postcode!')
+    //get the address based on the user's current location.
+    const address = await userLocation(ctx)
+    //get all values from the body
+    const {title, description, status} = ctx.request.body
+
 		// call the create function in the issue's module
-		await issue.createIssue(ctx.request.body.title, ctx.request.body.location, ctx.request.body.description, ctx.request.body.status, image, user).then(() => {
+		await issue.createIssue(title, address, description, status, image, user).then(() => {
       ctx.redirect('/')
     }).catch(err => {
       ctx.hbs.msg = err.message 
@@ -155,19 +157,66 @@ async function checkOwner(user, issue){
 }
 
 /**
- * The function to check if the postcode is valid.
+ * The function will automatically select the location of the issue based on the user's current location
  *
- * @name Check passcode validity
- * @params {String} postcode - the postcode string
- * @returns {Boolean} true if the posctode is valid
+ * @name Select the correct location
+ * @returns {String} the location based on the user's current location
  */
-async function validPostcode(postcode) {
-  //remove the empty spaces
-  postcode = postcode.replace(/\s/g, "");
-  //this is an expression used for the purpose of validation
-  var regex = /^[A-Z]{1,2}[0-9]{1,2}[A-Z]{0,1} ?[0-9][A-Z]{2}$/i;
-  //using regex to compare the postcode with the expression
-  return regex.test(postcode);
+async function userLocation(ctx) {
+  try{
+    //get the client ip address from request header
+    const key = 'x-forwarded-for'
+    const ip = ctx.header[key]
+
+    //get the user lat and long
+    const latLong = await getLatLong(ip)
+
+    //get a readable address 
+    const address = await getAddress(latLong.latitude, latLong.longitude)
+    
+    return address
+  } catch(err) {
+    console.log(err.message)
+  } 
+}
+
+/**
+ * The function will automatically get the latitude and longitude based on the user's current location
+ *
+ * @name Get the latitude and longitude
+ * @params {Integer} ip - the public ip address
+ * @returns {Object} the latitude and longitude based on the user's current location
+ */
+async function getLatLong(ip) { 
+  const settings = { method: "Get" }
+  
+  let getData = await fetch(`http://ipwhois.app/json/${ip}?objects=latitude,longitude`, settings)
+    .then(res => res.json())
+    .then((json) => {
+        return json
+    })
+  
+  return getData
+}
+
+/**
+ * The function will automatically provide a postcode the latitude and longitude
+ *
+ * @name Get the postcode
+ * @params {Integer} lat - the latitude
+ * @params {Integer} long - the longitude
+ * @returns {Object} information about the address (postcode)
+ */
+async function getAddress(lat, long) { 
+  const settings = { method: "Get" }
+  
+  let getData = await fetch(`http://api.postcodes.io/postcodes?lon=${long}&lat=${lat}`, settings)
+    .then(res => res.json())
+    .then((json) => {
+        return json.result[0].postcode
+    })
+  
+  return getData
 }
 
 export default router 
