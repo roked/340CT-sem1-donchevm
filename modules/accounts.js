@@ -18,9 +18,9 @@ class Accounts {
 	constructor(dbName = ':memory:') {
 		return (async() => {
 			this.db = await sqlite.open(dbName)
-			// we need this table to store the user accounts
+			// we need this table to store the user accounts (worker = if the user is identified as council worker 0(false), 1(true))
 			const sql = 'CREATE TABLE IF NOT EXISTS users\
-				(id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, pass TEXT, email TEXT);'
+				(id INTEGER PRIMARY KEY AUTOINCREMENT, user TEXT, pass TEXT, email TEXT, worker INTEGER DEFAULT 0);'
 			await this.db.run(sql)
 			return this
 		})()
@@ -31,9 +31,10 @@ class Accounts {
 	 * @param {String} user the chosen username
 	 * @param {String} pass the chosen password
 	 * @param {String} email the chosen email
+	 * @param {Integer} worker if user is from council or not
 	 * @returns {Boolean} returns true if the new user has been added
 	 */
-	async register(user, pass, email) {
+	async register(user, pass, email, worker) {
 		Array.from(arguments).forEach( val => {
 			if(val.length === 0) throw new Error('missing field')
 		})
@@ -44,7 +45,7 @@ class Accounts {
 		const emails = await this.db.get(sql)
 		if(emails.records !== 0) throw new Error(`email address "${email}" is already in use`)
 		pass = await bcrypt.hash(pass, saltRounds)
-		sql = `INSERT INTO users(user, pass, email) VALUES("${user}", "${pass}", "${email}")`
+		sql = `INSERT INTO users(user, pass, email, worker) VALUES("${user}", "${pass}", "${email}", "${worker}")`
 		await this.db.run(sql)
 		return true
 	}
@@ -66,6 +67,27 @@ class Accounts {
 		return true
 	}
 
+  /**
+	 * checks if the user is a worker or a resident
+	 * @param {String} username the username to check
+	 * @returns {Integer} returns 0 if false and 1 if true
+	 */
+  async isWorker(username) {
+		let sql = `SELECT worker FROM users WHERE user="${username}";`
+		const records = await this.db.get(sql)
+		if(!records) throw new Error(`something went wrong with user "${username}"`)
+		return records
+	}
+  
+  //TODO - remove
+  //delete the db
+  async delleteAll() {
+		let sql = `DROP TABLE users;`
+		const record = await this.db.run(sql)
+		if(record) throw new Error(`Something went wrong!`)
+		return true
+	}
+  
 	async close() {
 		await this.db.close()
 	}

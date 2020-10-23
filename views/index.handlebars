@@ -33,6 +33,7 @@
     {{#if authorised}}
     <a href="/issue/new" class="button">New Issue</a>
     {{/if}}
+    {{#unless isWorker}}
     <section class="cards">          
       {{#each issues}}          
       <article class="card">           
@@ -51,6 +52,27 @@
       </article>
       {{/each}}
     </section>
+    {{else}}
+    <section class="cards">   
+      <h1>Available Jobs</h1>
+      {{#each issues}}          
+      <article class="card">           
+          <figure class="thumbnail">
+            <img src="uploads/{{this.img}}" alt="issue">
+          </figure>
+          <div class="card-content">
+            <h2>{{this.title}}</h2>
+            <hr>
+            <p>Located: {{this.location}}</p>
+            <p>Status: {{this.status}}</p>
+            {{#if ../authorised}}
+              <a href="/issue/{{this.id}}" class="button">More Info</a>
+            {{/if}}
+          </div>
+      </article>
+      {{/each}}
+    </section>
+    {{/unless}}
   </div>
  </main>
     

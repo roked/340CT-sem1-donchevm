@@ -15,9 +15,11 @@ const dbName = 'website.db'
  */
 router.get('/', async ctx => {
 	try {
+    //check if the user is a council worker (return true or false)
+    const {isWorker} = ctx.session   
     const issue = await new Issues(dbName)
     const issues = await issue.getAllIssues()
-		await ctx.render('index', {issues: issues, authorised: ctx.hbs.authorised})
+		await ctx.render('index', {issues: issues, authorised: ctx.hbs.authorised, isWorker: isWorker})
 	} catch(err) {
 		await ctx.render('error', ctx.hbs)
 	}
@@ -40,9 +42,13 @@ router.get('/register', async ctx => await ctx.render('register'))
 router.post('/register', async ctx => {
 	const account = await new Accounts(dbName)
 	try {
+    //get all values from the body
+    const {user, pass, email, worker} = ctx.request.body
+    //check if the user is a worker
+    const ifWorker = (worker === 'i_am_worker') ? 1 : 0
 		// call the functions in the module
-		await account.register(ctx.request.body.user, ctx.request.body.pass, ctx.request.body.email)
-		ctx.redirect(`/login?msg=new user "${ctx.request.body.user}" added, you need to log in`)
+		await account.register(user, pass, email, ifWorker)
+		ctx.redirect(`/login?msg=new user "${user}" added, you need to log in`)
 	} catch(err) {
 		ctx.hbs.msg = err.message
 		ctx.hbs.body = ctx.request.body
@@ -84,8 +90,10 @@ router.post('/login', async ctx => {
 	try {
 		const body = ctx.request.body
 		await account.login(body.user, body.pass)
+    const isWorker = await account.isWorker(body.user)
 		ctx.session.authorised = true
     ctx.session.user = body.user
+    ctx.session.isWorker = (isWorker.worker === 1) ? true : false
 		const referrer = body.referrer || '/'
 		return ctx.redirect(`${referrer}?msg=you are now logged in...`)
 	} catch(err) {
