@@ -26,24 +26,60 @@
             <hr>
             <p>Located: {{issue.location}}</p>
             <p>Status: {{issue.status}}</p> 
-            {{#unless author}}
-              {{#unless resolving}}
-                {{#unless resolved}}
-                <form class="special" action="/issue/{{issue.id}}?_method=PUT" method="POST">
-                  <button>
-                    Resolve!
-                  </button>
-                </form>
+            {{#unless worker}}
+              {{#unless isResolvedByC}}
+                {{#unless author}}
+                  {{#unless resolving}}
+                    {{#unless resolved}}
+                      {{#unless verified}}
+                        <form class="special" action="/issue/{{issue.id}}?_method=PUT" method="POST">
+                          <input type="hidden" name="status" value="verified">  
+                          <button>
+                            Verify!
+                          </button>
+                        </form>
+                      {{/unless}}
+                    {{/unless}}
+                  {{/unless}}
+                {{/unless}}
+                {{#unless author}}
+                  {{#unless resolving}}
+                    {{#unless resolved}}
+                    <form class="special" action="/issue/{{issue.id}}?_method=PUT" method="POST">
+                      <button>
+                        Resolve!
+                      </button>
+                    </form>
+                    {{/unless}}
+                  {{/unless}}
                 {{/unless}}
               {{/unless}}
             {{/unless}}
+            
+            {{#if worker}}
+              {{#unless resolved}}
+                {{#unless resolving}}
+                  {{#unless isResolvedByC}}
+                    <form class="special" action="/issue/{{issue.id}}?_method=PUT" method="POST">
+                      <input type="hidden" name="status" value="resolved by the council">  
+                      <button>
+                        Resolve!
+                      </button>
+                    </form>
+                  {{/unless}}
+                {{/unless}}
+              {{/unless}}
+            {{/if}}
+
             {{#if author}}
               {{#if resolving}}
+                {{#unless isResolvedByC}}
                 <form class="special" action="/issue/{{issue.id}}?_method=PUT" method="POST">
                   <button>
                     Resolved!
                   </button>
                 </form>
+                {{/unless}}
               {{/if}}
             {{/if}}
             <p>Description: {{issue.des}}</p>

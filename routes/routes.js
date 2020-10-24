@@ -6,7 +6,7 @@ import publicRouter from './public.js'
 import secureRouter from './secure.js'
 import issuesRouter from './issues.js'
 
-const mainRouter  = new Router()
+const mainRouter = new Router()
 
 mainRouter.use(bodyParser({multipart: true}))
 
