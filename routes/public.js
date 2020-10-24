@@ -5,7 +5,7 @@ import fetch from 'node-fetch'
 const router = new Router()
 
 import Accounts from '../modules/accounts.js'
-import Issues   from '../modules/issues.js'
+import Issues from '../modules/issues.js'
 const dbName = 'website.db'
 
 /**
@@ -16,15 +16,15 @@ const dbName = 'website.db'
  */
 router.get('/', async ctx => {
 	try {
-    //check if the user is a council worker (return true or false)
-    const {isWorker} = ctx.session   
-    const issue = await new Issues(dbName)
-    const issues = await issue.getAllIssues()
-    
-    //sort the issues (closest first)
-    await sortIssues(issues, ctx)
-    
-		await ctx.render('index', {issues: issues, authorised: ctx.hbs.authorised, isWorker: isWorker})
+		//check if the user is a council worker (return true or false)
+		const {isWorker} = ctx.session
+		const issue = await new Issues(dbName)
+		const issues = await issue.getAllIssues()
+
+		//get a sorted map of issues - key/value = distance/issue(object) (closest first)
+		const sortedIssues = await sortIssues(issues, ctx)
+
+		await ctx.render('index', {issues: sortedIssues, authorised: ctx.hbs.authorised, isWorker: isWorker})
 	} catch(err) {
 		await ctx.render('error', ctx.hbs)
 	}
@@ -47,10 +47,10 @@ router.get('/register', async ctx => await ctx.render('register'))
 router.post('/register', async ctx => {
 	const account = await new Accounts(dbName)
 	try {
-    //get all values from the body
-    const {user, pass, email, worker} = ctx.request.body
-    //check if the user is a worker
-    const ifWorker = (worker === 'i_am_worker') ? 1 : 0
+		//get all values from the body
+		const {user, pass, email, worker} = ctx.request.body
+		//check if the user is a worker
+		const ifWorker = worker === 'i_am_worker' ? 1 : 0
 		// call the functions in the module
 		await account.register(user, pass, email, ifWorker)
 		ctx.redirect(`/login?msg=new user "${user}" added, you need to log in`)
@@ -95,12 +95,12 @@ router.post('/login', async ctx => {
 	try {
 		const body = ctx.request.body
 		await account.login(body.user, body.pass)
-    const isWorker = await account.isWorker(body.user)
+		const isWorker = await account.isWorker(body.user)
 		ctx.session.authorised = true
-    ctx.session.user = body.user
-    ctx.session.isWorker = (isWorker.worker === 1) ? true : false
+		ctx.session.user = body.user
+		ctx.session.isWorker = isWorker.worker === 1 ? true : false
 		const referrer = body.referrer || '/'
-		return ctx.redirect(`${referrer}?msg=you are now logged in...`)
+		return ctx.redirect(`${referrer}`)
 	} catch(err) {
 		ctx.hbs.msg = err.message
 		await ctx.render('login', ctx.hbs)
@@ -114,25 +114,33 @@ router.get('/logout', async ctx => {
 	ctx.redirect('/')
 })
 
-
+/**
+ * The function will get the user location and get the distance between them and each issue location
+ *
+ * @name Sort the issues (closest first)
+ * @params {Array} issues - all issues
+ * @params {Object} ctx - context
+ * @returns {Map} a map object which contains key/value - distance/issue(object)
+ */
 async function sortIssues(issues, ctx) {
-  try{
-    //get the location of the user
-    const userLoc = await userLocation(ctx)
-
-    let sortedIssues = issues
-    let distances = []
-
-    for(const issue of issues){
-      const latLon = await getLatAndLong(issue.location)
-      const distance = getDistance(userLoc.latitude,userLoc.longitude,latLon.latitude,latLon.longitude) 
-      distances.push(distance)
-    }
-
-    console.log(distances)
-  } catch (err) {
-    console.log(err)
-  }
+	try{
+		const userLoc = await userLocation(ctx) //get the location of the user
+		let plus = 0.000001
+		const issuesData = new Map() //create a map and store (distance, issue)
+		for(const issue of issues) {
+			const latLon = await getLatAndLong(issue.location)
+			let distance = getDistance(userLoc.latitude,userLoc.longitude,latLon.latitude,latLon.longitude)
+			if(issuesData.has(distance)) { //prevent duplication add a 0.01 to the distance
+				distance += plus
+				plus += plus
+			}
+			issuesData.set(distance, issue)
+		}
+		const mapSorted = new Map([...issuesData.entries()].sort()) //sort the map using sort functions on all entries
+		return mapSorted //return the sorted map
+	} catch (err) {
+		console.log(err)
+	}
 }
 
 /**
@@ -142,18 +150,18 @@ async function sortIssues(issues, ctx) {
  * @returns {String} the location based on the user's current location
  */
 async function userLocation(ctx) {
-  try{
-    //get the client ip address from request header
-    const key = 'x-forwarded-for'
-    const ip = ctx.header[key]
+	try{
+		//get the client ip address from request header
+		const key = 'x-forwarded-for'
+		const ip = ctx.header[key]
 
-    //get the user lat and long
-    const latLong = await getLatLong(ip)
-    
-    return latLong
-  } catch(err) {
-    console.log(err.message)
-  } 
+		//get the user lat and long
+		const latLong = await getLatLong(ip)
+
+		return latLong
+	} catch(err) {
+		console.log(err.message)
+	}
 }
 
 /**
@@ -163,16 +171,14 @@ async function userLocation(ctx) {
  * @params {Integer} ip - the public ip address
  * @returns {Object} the latitude and longitude based on the user's current location
  */
-async function getLatLong(ip) { 
-  const settings = { method: "Get" }
-  
-  let getData = await fetch(`http://ipwhois.app/json/${ip}?objects=latitude,longitude`, settings)
-    .then(res => res.json())
-    .then((json) => {
-        return json
-    })
-  
-  return getData
+async function getLatLong(ip) {
+	const settings = { method: 'Get' }
+
+	const getData = await fetch(`http://ipwhois.app/json/${ip}?objects=latitude,longitude`, settings)
+		.then(res => res.json())
+		.then((json) => json)
+
+	return getData
 }
 
 /**
@@ -182,16 +188,14 @@ async function getLatLong(ip) {
  * @params {String} postcode - the postcode of an issue
  * @returns {Object} information about the address (including long and lat)
  */
-async function getLatAndLong(postcode) { 
-  const settings = { method: "Get" }
-  
-  let getData = await fetch(`http://api.postcodes.io/postcodes/${postcode}`, settings)
-    .then(res => res.json())
-    .then((json) => {
-        return json.result
-    })
-  
-  return getData
+async function getLatAndLong(postcode) {
+	const settings = { method: 'Get' }
+
+	const getData = await fetch(`http://api.postcodes.io/postcodes/${postcode}`, settings)
+		.then(res => res.json())
+		.then((json) => json.result)
+
+	return getData
 }
 
 /**
@@ -203,25 +207,29 @@ async function getLatAndLong(postcode) {
  * @params {Integer} lat2 - destination 2 latitude
  * @params {Integer} lon2 - destination 2 latitude
  * @returns {Array} sorted list of locations
- * 
+ *
  * Reference https://en.wikipedia.org/wiki/Haversine_formula, http://www.movable-type.co.uk/scripts/latlong.html
  */
 function getDistance(lat1,lon1,lat2,lon2) {
-  var R = 6371; // Radius of the earth in km
-  var dLat = deg2rad(lat2-lat1);  // deg2rad below
-  var dLon = deg2rad(lon2-lon1); 
-  var a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2)
-    ; 
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-  var d = R * c; 
-  return d; // returns the distance in km
+	const radius = 6371 // Radius of the earth in km
+	const half = 2
+	const hundred = 100
+	const disLat = deg2rad(lat2-lat1) // deg2rad below
+	const disLon = deg2rad(lon2-lon1)
+	const a =
+    Math.sin(disLat/half) * Math.sin(disLat/half) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+    Math.sin(disLon/half) * Math.sin(disLon/half)
+
+	const c = half * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+	const distance = radius * c
+	// returns the distance in km / rounded to second decimal place
+	return Math.round((distance + Number.EPSILON) * hundred) / hundred
 }
 
 function deg2rad(deg) {
-  return deg * (Math.PI/180)
+	const halfD = 180 //180 degree
+	return deg * (Math.PI/halfD)
 }
 
 export default router

@@ -30,47 +30,48 @@
    </header>
  <main class="main-area">
   <div class="centered">
-    {{#if authorised}}
-    <a href="/issue/new" class="button">New Issue</a>
-    {{/if}}
     {{#unless isWorker}}
-    <section class="cards">          
-      {{#each issues}}          
-      <article class="card">           
-          <figure class="thumbnail">
-            <img src="uploads/{{this.img}}" alt="issue">
-          </figure>
-          <div class="card-content">
-            <h2>{{this.title}}</h2>
-            <hr>
-            <p>Located: {{this.location}}</p>
-            <p>Status: {{this.status}}</p>
-            {{#if ../authorised}}
-              <a href="/issue/{{this.id}}" class="button">More Info</a>
-            {{/if}}
-          </div>
-      </article>
-      {{/each}}
+    {{#if authorised}}
+      <a href="/issue/new" class="button">New Issue</a>
+    {{/if}}
+    <section class="cards">  
+      {{#eachMap issues}}
+          <article class="card">           
+              <figure class="thumbnail">
+                <img src="uploads/{{value.img}}" alt="issue">
+              </figure>
+              <div class="card-content">
+                <h2>{{value.title}}</h2>
+                <hr>
+                <p>Located: {{value.location}}</p>
+                <p>Status: {{value.status}}</p>
+                {{#if ../authorised}}
+                  <a href="/issue/{{value.id}}" class="button">More Info</a>
+                {{/if}}
+              </div>
+          </article>
+      {{/eachMap}}
     </section>
     {{else}}
     <section class="cards">   
       <h1>Available Jobs</h1>
-      {{#each issues}}          
-      <article class="card">           
-          <figure class="thumbnail">
-            <img src="uploads/{{this.img}}" alt="issue">
-          </figure>
-          <div class="card-content">
-            <h2>{{this.title}}</h2>
-            <hr>
-            <p>Located: {{this.location}}</p>
-            <p>Status: {{this.status}}</p>
-            {{#if ../authorised}}
-              <a href="/issue/{{this.id}}" class="button">More Info</a>
-            {{/if}}
-          </div>
-      </article>
-      {{/each}}
+      {{#eachMap issues}}
+          <article class="card">           
+              <figure class="thumbnail">
+                <img src="uploads/{{value.img}}" alt="issue">
+              </figure>
+              <div class="card-content">
+                <h2>{{value.title}}</h2>
+                <hr>
+                <p>Located: {{value.location}}</p>
+                <p>Status: {{value.status}}</p>
+                <p>Distance: {{key}}km</p>
+                {{#if ../authorised}}
+                  <a href="/issue/{{value.id}}" class="button">More Info</a>
+                {{/if}}
+              </div>
+          </article>
+      {{/eachMap}}
     </section>
     {{/unless}}
   </div>
