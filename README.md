@@ -1,4 +1,4 @@
-# Local Community Project - 340CT Assessme
+# Local Community Project - 340CT Assessment project
 #### - Author: Mitko Donchev
 #### - SID: 7683343
 
