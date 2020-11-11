@@ -1,5 +1,9 @@
-/** @module Accounts */
-
+/**
+  * @name Account module
+  * @module database/accounts
+  * @description Contains the implementation of the accounts DB and methods to work with the DB.
+  * @author Mitko Donchev
+*/
 import bcrypt from 'bcrypt-promise'
 import sqlite from 'sqlite-async'
 
@@ -28,7 +32,7 @@ class Accounts {
 	}
 
 	/**
-	 * registers a new user
+	 * Registers a new user
 	 * @param {String} user the chosen username
 	 * @param {String} pass the chosen password
 	 * @param {String} email the chosen email
@@ -52,7 +56,7 @@ class Accounts {
 	}
 
 	/**
-	 * checks to see if a set of login credentials are valid
+	 * Checks to see if a set of login credentials are valid
 	 * @param {String} username the username to check
 	 * @param {String} password the password to check
 	 * @returns {Boolean} returns true if credentials are valid
@@ -69,7 +73,7 @@ class Accounts {
 	}
 
 	/**
-	 * checks if the user is a worker or a resident
+	 * Checks if the user is a worker or a resident
 	 * @param {String} username the username to check
 	 * @returns {Integer} returns 0 if false and 1 if true
 	 */
@@ -80,8 +84,10 @@ class Accounts {
 		return records
 	}
 
-	//TODO - remove
-	//delete the db
+	/**
+	 * Clear the DB after tasting or if corrupted
+	 * @returns {Boolean} true if the db is clear
+	 */
 	async delleteAll() {
 		const sql = 'DROP TABLE users;'
 		const record = await this.db.run(sql)
@@ -89,9 +95,15 @@ class Accounts {
 		return true
 	}
 
+	/**
+	 * Close the database
+	 */
 	async close() {
 		await this.db.close()
 	}
 }
 
+/**
+* Export the accounts class
+*/
 export default Accounts

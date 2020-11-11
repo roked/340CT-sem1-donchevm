@@ -1,8 +1,21 @@
-
+/**
+  * @name Issues module
+  * @module database/issues
+  * @description Contains the implementation of the issues DB and methods to work with the DB.
+  * @author Mitko Donchev
+*/
 import sqlite from 'sqlite-async'
 
+/**
+ * Issues
+ * ES6 module that handles creating issues and modifying them.
+ */
 class Issues {
 
+	/**
+   * Create an issue object
+   * @param {String} [dbName=":memory:"] - The name of the database file to use.
+   */
 	constructor(dbName = ':memory:') {
 		return (async() => {
 			this.db = await sqlite.open(dbName)
@@ -18,7 +31,7 @@ class Issues {
 	}
 
 	/**
-	 * create a new issue
+	 * Create a new issue
 	 * @param {Object} issue - the info about the issue
 	 * @returns {Boolean} returns true if the new issue has been added
 	 */
@@ -37,8 +50,8 @@ class Issues {
 	}
 
 	/**
-	 * pull all issue from the DB
-	 * @returns {Boolean} returns all issues
+	 * Pull all issues from the DB
+	 * @returns {Object} returns all issues
 	 */
 	async getAllIssues() {
 		const sql = 'SELECT * FROM issues;'
@@ -48,9 +61,9 @@ class Issues {
 	}
 
 	/**
-	 * pull the issue information from the DB
+	 * Pull the issue information from the DB
 	 * @param {Integer} id the unique id of the issue
-	 * @returns {Object} returns the information
+	 * @returns {Object} returns the issue
 	 */
 	async getIssue(id) {
 		const sql = `SELECT * FROM issues WHERE id="${id}";`
@@ -60,7 +73,7 @@ class Issues {
 	}
 
 	/**
-	 * update the issue information
+	 * Update issue's information
 	 * @param {Object} issue the issue object which contains the updated information
 	 * @returns {Boolean} returns true if everything is fine
 	 */
@@ -72,7 +85,7 @@ class Issues {
 	}
 
 	/**
-	 * clear the DB after tasting
+	 * Clear the DB after tasting or if corrupted
 	 * @returns {Boolean} true if the db is clear
 	 */
 	async delleteAll() {
@@ -82,9 +95,15 @@ class Issues {
 		return true
 	}
 
+   /**
+	 * Close the database
+	 */
 	async close() {
 		await this.db.close()
 	}
 }
 
+/**
+* Export the issues class
+*/
 export default Issues

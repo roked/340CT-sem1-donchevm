@@ -1,11 +1,30 @@
+/**
+ * @module router/issues
+ * @description Contains the implementation all routes related to issues.
+ * @author Mitko Donchev
+ */
 import Router from 'koa-router'
 import fs from 'fs-extra'
 import fetch from 'node-fetch'
 
 import Issues from '../modules/issues.js'
 
-const router = new Router({ prefix: '/issue' })
+const router = new Router({prefix: '/issue'})
 const dbName = 'website.db'
+
+/**
+ * This middleware will check if the user is authenticated.
+ *
+ * @name User authentication
+ * @params {Object} ctx context
+ */
+async function checkAuth(ctx, next) {
+  //check if the user is authenticated
+	if(ctx.hbs.authorised !== true) return ctx.redirect('/login')
+	await next()
+}
+
+router.use(checkAuth)
 
 /**
  * The add new issue page.
@@ -17,7 +36,7 @@ router.get('/new', async ctx => {
 	try {
 		await userLocation(ctx)
 		await ctx.render('new', ctx.hbs)
-	} catch(err) {
+	} catch (err) {
 		await ctx.render('error', ctx.hbs)
 	}
 })
@@ -45,7 +64,7 @@ router.post('/new', async ctx => {
 			console.log(err)
 			ctx.render('new', ctx.hbs)
 		})
-	} catch(err) {
+	} catch (err) {
 		await ctx.render('new', ctx.hbs)
 	} finally {
 		issue.close()
@@ -70,11 +89,13 @@ router.get('/:id', async ctx => {
 		const issueInfo = await issue.getIssue(id)
 		const isOwner = await checkOwner(user, issueInfo) //check the owner
 		//check status (returns a map)
-		const allSatus = getStatus(issueInfo)
-		await ctx.render('issue', {issue: issueInfo, author: isOwner, resolving: allSatus.get('resolving'),
-			resolved: allSatus.get('resolved'), verified: allSatus.get('verified'),
-			isResolvedByC: allSatus.get('resolved by the council'), worker: isWorker })
-	} catch(err) {
+		const allStatus = getStatus(issueInfo)
+		await ctx.render('issue', {
+			issue: issueInfo, author: isOwner, resolving: allStatus.get('resolving'),
+			resolved: allStatus.get('resolved'), verified: allStatus.get('verified'),
+			isResolvedByC: allStatus.get('resolved by the council'), worker: isWorker
+		})
+	} catch (err) {
 		await ctx.redirect('/')
 	} finally {
 		issue.close()
@@ -100,11 +121,11 @@ router.put('/:id', async ctx => {
 		//change the status (if it was status resolving change to resolved)
 		issueInfo.status = status === 'resolved by the council' ? 'resolved by the council' : status === 'verified'
 			? 'verified' : issueInfo.status === 'resolving' ? 'resolved' : 'resolving'
-		// call the updaet issue function in the issue's module
+		// call the update issue function in the issue's module
 		await issue.updateIssue(issueInfo).then(() => {
 			ctx.redirect('/')
 		}).catch(err => ctx.hbs.msg = err.message)
-	} catch(err) {
+	} catch (err) {
 		ctx.hbs.msg = err.message
 		ctx.hbs.body = ctx.request.body
 		console.log(ctx.hbs)
@@ -118,16 +139,16 @@ router.put('/:id', async ctx => {
  * The function to get the file from the frontend and store it.
  *
  * @name Get file function
- * @params {Object} ctx - context
+ * @params {Object} ctx context
  * @returns {String} the name of the file which will be stored in the DB and used as reference
  */
 async function getFile(ctx) {
 	const image = ctx.request.files.image
-	if(image.size === 0) return 'default.png'
+	if (image.size === 0) return 'default.png'
 	try {
 		await fs.copy(image.path, `public/uploads/${image.name}`)
 		return image.name
-	} catch(err) {
+	} catch (err) {
 		console.log(err.message)
 	}
 }
@@ -136,35 +157,31 @@ async function getFile(ctx) {
  * The function to check the owner of the issue.
  *
  * @name Check owner function
- * @params {String} user - user who checks the issue
- * @params {Object} issue - the issue
+ * @params {String} user user who checks the issue
+ * @params {Object} issue the issue info
  * @returns {Boolean} true if the owner match
  */
 async function checkOwner(user, issue) {
-	return user === issue.author ? true : false
+	return user === issue.author
 }
 
 /**
  * The function will automatically select the location of the issue based on the user's current location
  *
  * @name Select the correct location
- * @params {Object} ctx - context
+ * @params {Object} ctx context
  * @returns {String} the location based on the user's current location
  */
 async function userLocation(ctx) {
-	try{
+	try {
 		//get the client ip address from request header
 		const key = 'x-forwarded-for'
 		const ip = ctx.header[key]
-
 		//get the user lat and long
 		const latLong = await getLatLong(ip)
-
 		//get a readable address
-		const address = await getAddress(latLong.latitude, latLong.longitude)
-
-		return address
-	} catch(err) {
+		return await getAddress(latLong.latitude, latLong.longitude)
+	} catch (err) {
 		console.log(err.message)
 	}
 }
@@ -173,54 +190,48 @@ async function userLocation(ctx) {
  * The function will automatically get the latitude and longitude based on the user's current location
  *
  * @name Get the latitude and longitude
- * @params {Integer} ip - the public ip address
+ * @params {Integer} ip the public ip address
  * @returns {Object} the latitude and longitude based on the user's current location
  */
 async function getLatLong(ip) {
-	const settings = { method: 'Get' }
-
-	const getData = await fetch(`http://ipwhois.app/json/${ip}?objects=latitude,longitude`, settings)
+	const settings = {method: 'Get'}
+	//fetch the data from the api and return the result
+	return await fetch(`http://ipwhois.app/json/${ip}?objects=latitude,longitude`, settings)
 		.then(res => res.json())
 		.then((json) => json)
-
-	return getData
 }
 
 /**
- * The function will automatically provide a postcode the latitude and longitude
+ * The function will automatically retireve the postcode using latitude and longitude
  *
  * @name Get the postcode
- * @params {Integer} lat - the latitude
- * @params {Integer} long - the longitude
+ * @params {Integer} lat the latitude
+ * @params {Integer} long the longitude
  * @returns {Object} information about the address (postcode)
  */
 async function getAddress(lat, long) {
-	const settings = { method: 'Get' }
-
-	const getData = await fetch(`http://api.postcodes.io/postcodes?lon=${long}&lat=${lat}`, settings)
+	const settings = {method: 'Get'} //method 'get'
+	//fetch the data from the api and return the result
+	return await fetch(`http://api.postcodes.io/postcodes?lon=${long}&lat=${lat}`, settings)
 		.then(res => res.json())
 		.then((json) => json.result[0].postcode)
-
-	return getData
 }
 
 /**
- * The function will get the actual status every time
+ * The function will get the actual status
  *
  * @name Get the status
- * @params {Object} issue - the current issue info
+ * @params {Object} issue - the issue info
  * @returns {Object} map of activated (and skiped) statuses
  */
 function getStatus(issue) {
 	const allStatus = ['resolving', 'resolved', 'verified', 'resolved by the council']
+	const statuses = new Map() // create a map to store the statuses
 
-	const statuses = new Map()
-
-	for(let i=0; i<allStatus.length; i++) {
-		statuses.set(allStatus[i], issue.status === allStatus[i] ? true : false)
+	for (let i = 0; i < allStatus.length; i++) {
+		statuses.set(allStatus[i], issue.status === allStatus[i])
 	}
-
-	return statuses
+	return statuses //return the satus map
 }
 
 export default router
