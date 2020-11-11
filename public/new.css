@@ -14,6 +14,7 @@ main {
 
 #new {
   padding: 0 10em;
+  text-align: -webkit-center;
 }
 
 .special {
@@ -47,6 +48,7 @@ body {
 .contact-us{
   background: #ffffff;
   padding: 50px 100px;
+  max-width: 500px;
 }
 
 label, input, textarea{

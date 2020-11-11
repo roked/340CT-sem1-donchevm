@@ -1,11 +1,13 @@
-
+/**
+ * @name Main server file
+ * @description Contains the implementation of the server.
+ */
 import Koa from 'koa'
 import serve from 'koa-static'
 import views from 'koa-views'
 import session from 'koa-session'
 import methodOverride from 'koa-methodoverride'
 import Handlebars from 'handlebars'
-
 import router from './routes/routes.js'
 
 const app = new Koa()
@@ -47,4 +49,5 @@ app.use(getHandlebarData)
 app.use(router.routes())
 app.use(router.allowedMethods())
 
+//run server
 app.listen(port, async() => console.log(`listening on port ${port}`))

@@ -21,15 +21,15 @@
 		<form action="/register" enctype="multipart/form-data" method="post">
 			<p>
 				<label for="user">Username</label><br />
-				<input type="text" name="user" placeholder="your preferred username (no spaces)" value="{{body.user}}">
+				<input type="text" name="user" placeholder="your preferred username (no spaces)" value="{{body.user}}" required>
 			</p>
 			<p>
 				<label for="pass">Password</label><br />
-				<input type="password" name="pass" placeholder="your chosen password" value="{{body.pass}}">
+				<input type="password" name="pass" placeholder="your chosen password" minLength="8" value="{{body.pass}}" required>
 			</p>
 			<p>
 				<label for="email">Email</label><br />
-				<input type="email" name="email" placeholder="a valid email address" value="{{body.email}}">
+				<input type="email" name="email" placeholder="a valid email address" value="{{body.email}}" required>
 			</p>
       <p>
 				<label for="worker">Council Worker? <br /> (Council passcode! ex.'i_am_worker')</label><br />
