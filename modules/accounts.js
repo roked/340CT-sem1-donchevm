@@ -80,7 +80,6 @@ class Accounts {
 	async isWorker(username) {
 		const sql = `SELECT worker FROM users WHERE user="${username}";`
 		const records = await this.db.get(sql)
-		if(!records) throw new Error(`something went wrong with user "${username}"`)
 		return records
 	}
 
@@ -89,10 +88,15 @@ class Accounts {
 	 * @returns {Boolean} true if the db is clear
 	 */
 	async delleteAll() {
-		const sql = 'DROP TABLE users;'
-		const record = await this.db.run(sql)
-		if(record) throw new Error('Something went wrong!')
-		return true
+		let sql = 'DROP TABLE users;'
+    await this.db.run(sql)
+    sql = 'SELECT * FROM users;'
+    try {
+      await this.db.get(sql)
+    } catch(err) {
+      return true
+    }
+    throw new Error('Something went wrong!')
 	}
 
 	/**
