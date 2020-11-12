@@ -161,7 +161,7 @@ router.get('/logout', async ctx => {
  * @params {Object} ctx - context
  * @returns {Map} a map object which contains key/value - distance/issue(object)
  */
-async function sortIssues(issues, ctx) {
+export async function sortIssues(issues, ctx) {
 	try {
 		const userLoc = await userLocation(ctx) //get the location of the user
 		let plus = 0.000001
@@ -178,7 +178,7 @@ async function sortIssues(issues, ctx) {
 		//sort the map using sort functions on all entries
 		return new Map([...issuesData.entries()].sort()) //return the sorted map
 	} catch (err) {
-		console.log(err)
+		throw new Error('Missing or invalid parameters')
 	}
 }
 
@@ -198,7 +198,7 @@ async function userLocation(ctx) {
 		//get the user lat and long
 		return await getLatLong(ip)
 	} catch (err) {
-		console.log(err.message)
+		throw new Error('Missing or invalid parameters')
 	}
 }
 
@@ -210,12 +210,16 @@ async function userLocation(ctx) {
  * @params {Integer} ip - the public ip address
  * @returns {Object} the latitude and longitude based on the user's current location
  */
-async function getLatLong(ip) {
-	const settings = {method: 'Get'}
-	//fetch the data from the api and return the result
-	return await fetch(`http://ipwhois.app/json/${ip}?objects=latitude,longitude`, settings)
-		.then(res => res.json())
-		.then((json) => json)
+export async function getLatLong(ip) {
+	try {
+		const settings = {method: 'Get'}
+		//fetch the data from the api and return the result
+		return await fetch(`http://ipwhois.app/json/${ip}?objects=latitude,longitude`, settings)
+			.then(res => res.json())
+			.then((json) => json)
+	} catch (err) {
+		console.log(err)
+	}
 }
 
 /**
@@ -226,12 +230,16 @@ async function getLatLong(ip) {
  * @params {String} postcode the postcode of an issue
  * @returns {Object} information about the address (including long and lat)
  */
-async function getLatAndLong(postcode) {
-	const settings = {method: 'Get'}
-	//fetch the data from the api and return the result
-	return await fetch(`http://api.postcodes.io/postcodes/${postcode}`, settings)
-		.then(res => res.json())
-		.then((json) => json.result)
+export async function getLatAndLong(postcode) {
+	try {
+		const settings = {method: 'Get'}
+		//fetch the data from the api and return the result
+		return await fetch(`http://api.postcodes.io/postcodes/${postcode}`, settings)
+			.then(res => res.json())
+			.then((json) => json.result)
+	} catch (err) {
+		console.log(err)
+	}
 }
 
 /**
@@ -247,7 +255,7 @@ async function getLatAndLong(postcode) {
  *
  * Reference https://en.wikipedia.org/wiki/Haversine_formula, http://www.movable-type.co.uk/scripts/latlong.html
  */
-function getDistance(lat1, lon1, lat2, lon2) {
+export function getDistance(lat1, lon1, lat2, lon2) {
 	const radius = 6371 // Radius of the earth in km
 	const half = 2
 	const hundred = 100

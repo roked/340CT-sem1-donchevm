@@ -36,8 +36,8 @@ class Issues {
 	 * @returns {Boolean} returns true if the new issue has been added
 	 */
 	async createIssue(issue) {
-		Array.from(arguments).forEach( val => {
-			if(val.length === 0) throw new Error('missing info')
+		Object.keys(issue).forEach( key => {
+			if(issue[key] === '') throw new Error('missing info')
 		})
 		let sql = `SELECT COUNT(id) as records FROM issues WHERE title="${issue.title}";`
 		const data = await this.db.get(sql)
@@ -45,7 +45,8 @@ class Issues {
 		sql = `INSERT INTO issues(title, location, des, status, img, author) 
             VALUES("${issue.title}", "${issue.loc}", "${issue.des}", 
                     "${issue.status}", "${issue.img}", "${issue.author}")`
-		await this.db.run(sql)
+		const result = await this.db.run(sql)
+		if(!result) throw new Error('Please check again the information you entered!')
 		return true
 	}
 
@@ -54,9 +55,11 @@ class Issues {
 	 * @returns {Object} returns all issues
 	 */
 	async getAllIssues() {
-		const sql = 'SELECT * FROM issues;'
+		let sql = 'SELECT COUNT(id) as count FROM issues;'
+		const records = await this.db.get(sql)
+		if(!records.count) throw new Error('not existing issues yet')
+		sql = 'SELECT * FROM issues;'
 		const record = await this.db.all(sql)
-		if(!record) throw new Error('not existing issues yet')
 		return record
 	}
 
@@ -78,9 +81,14 @@ class Issues {
 	 * @returns {Boolean} returns true if everything is fine
 	 */
 	async updateIssue(issue) {
-		const sql = `UPDATE issues SET status="${issue.status}" WHERE id="${issue.id}";`
-		const record = await this.db.run(sql)
-		if(!record) throw new Error(`not existing information for issue with ID: "${issue.id}"`)
+		Object.keys(issue).forEach( key => {
+			if(issue[key] === '') throw new Error(`missing info ${key}`)
+		})
+		let sql = `SELECT COUNT(id) as records FROM issues WHERE id="${issue.id}";`
+		const data = await this.db.get(sql)
+		if(data.records === 0) throw new Error(`cannot update the information for issue with ID: "${issue.id}"`)
+	  sql = `UPDATE issues SET status="${issue.status}" WHERE id="${issue.id}";`
+		await this.db.run(sql)
 		return true
 	}
 
@@ -89,13 +97,18 @@ class Issues {
 	 * @returns {Boolean} true if the db is clear
 	 */
 	async delleteAll() {
-		const sql = 'DROP TABLE issues;'
-		const record = await this.db.run(sql)
-		if(record) throw new Error('Something went wrong!')
-		return true
+		let sql = 'DROP TABLE issues;'
+		await this.db.run(sql)
+		sql = 'SELECT * FROM issues;'
+		try {
+			await this.db.get(sql)
+		} catch(err) {
+			return true
+		}
+		throw new Error('Something went wrong!')
 	}
 
-   /**
+	/**
 	 * Close the database
 	 */
 	async close() {
