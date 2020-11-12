@@ -89,14 +89,14 @@ class Accounts {
 	 */
 	async delleteAll() {
 		let sql = 'DROP TABLE users;'
-    await this.db.run(sql)
-    sql = 'SELECT * FROM users;'
-    try {
-      await this.db.get(sql)
-    } catch(err) {
-      return true
-    }
-    throw new Error('Something went wrong!')
+		await this.db.run(sql)
+		sql = 'SELECT * FROM users;'
+		try {
+			await this.db.get(sql)
+		} catch(err) {
+			return true
+		}
+		throw new Error('Something went wrong!')
 	}
 
 	/**

@@ -19,7 +19,7 @@ const dbName = 'website.db'
  * @params {Object} ctx context
  */
 async function checkAuth(ctx, next) {
-  //check if the user is authenticated
+	//check if the user is authenticated
 	if(ctx.hbs.authorised !== true) return ctx.redirect('/login')
 	await next()
 }
@@ -51,7 +51,7 @@ router.post('/new', async ctx => {
 	const issue = await new Issues(dbName) //connect with the DB
 	try {
 		const {user} = ctx.session //get the author's name
-		const image = await getFile(ctx) //get the image from the input
+		const image = await getFile(ctx.request.files.image) //get the image from the input
 		//get the address based on the user's current location.
 		const address = await userLocation(ctx)
 		const {title, description, status} = ctx.request.body //get all values
@@ -139,15 +139,14 @@ router.put('/:id', async ctx => {
  * The function to get the file from the frontend and store it.
  *
  * @name Get file function
- * @params {Object} ctx context
+ * @params {Buffer} file the image
  * @returns {String} the name of the file which will be stored in the DB and used as reference
  */
-async function getFile(ctx) {
-	const image = ctx.request.files.image
-	if (image.size === 0) return 'default.png'
+export async function getFile(file) {
+	if (!file || file.size === 0) return 'default.png'
 	try {
-		await fs.copy(image.path, `public/uploads/${image.name}`)
-		return image.name
+		await fs.copy(file.path, `public/uploads/${file.name}`)
+		return file.name
 	} catch (err) {
 		console.log(err.message)
 	}
@@ -161,7 +160,9 @@ async function getFile(ctx) {
  * @params {Object} issue the issue info
  * @returns {Boolean} true if the owner match
  */
-async function checkOwner(user, issue) {
+export function checkOwner(user, issue) {
+	if(typeof issue !== 'object'
+     || typeof user !== 'string') throw new Error('Missing or invalid parameter')
 	return user === issue.author
 }
 
@@ -193,7 +194,7 @@ async function userLocation(ctx) {
  * @params {Integer} ip the public ip address
  * @returns {Object} the latitude and longitude based on the user's current location
  */
-async function getLatLong(ip) {
+export async function getLatLong(ip) {
 	const settings = {method: 'Get'}
 	//fetch the data from the api and return the result
 	return await fetch(`http://ipwhois.app/json/${ip}?objects=latitude,longitude`, settings)
@@ -209,12 +210,16 @@ async function getLatLong(ip) {
  * @params {Integer} long the longitude
  * @returns {Object} information about the address (postcode)
  */
-async function getAddress(lat, long) {
-	const settings = {method: 'Get'} //method 'get'
-	//fetch the data from the api and return the result
-	return await fetch(`http://api.postcodes.io/postcodes?lon=${long}&lat=${lat}`, settings)
-		.then(res => res.json())
-		.then((json) => json.result[0].postcode)
+export async function getAddress(lat, long) {
+	try {
+		const settings = {method: 'Get'} //method 'get'
+		//fetch the data from the api and return the result
+		return await fetch(`http://api.postcodes.io/postcodes?lon=${long}&lat=${lat}`, settings)
+			.then(res => res.json())
+			.then((json) => json.result[0].postcode)
+	} catch (err) {
+		console.log(err)
+	}
 }
 
 /**
@@ -224,7 +229,8 @@ async function getAddress(lat, long) {
  * @params {Object} issue - the issue info
  * @returns {Object} map of activated (and skiped) statuses
  */
-function getStatus(issue) {
+export function getStatus(issue) {
+	if(typeof issue !== 'object') throw new Error('No issue provided')
 	const allStatus = ['resolving', 'resolved', 'verified', 'resolved by the council']
 	const statuses = new Map() // create a map to store the statuses
 

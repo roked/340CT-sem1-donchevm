@@ -18,7 +18,15 @@
  - JsDocs are available after running ```node docs.js```
  - After that visit the docs on ```{server}:{port}(Default: 8080)```
 
- * during dev: update jsDocs ```sudo ./node_modules/jsdoc/jsdoc.js -c jsdoc.conf.json```
+ * during dev: update jsDocs ```sudo ./node_modules/jsdoc/jsdoc.js -c jsdoc.conf```
+
+# Testing
+
+#### Two tests are available:
+   1. You can run linter - ```npm run linter```
+   2. And unit testing with ava - ```npm test```
+
+  N.B - There won't be any errors. That's for sure.
 
 # Available routes
 

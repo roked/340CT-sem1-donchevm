@@ -2,14 +2,14 @@ import test from 'ava'
 import Accounts from '../modules/accounts.js'
 
 test('REGISTER : register and log in with a valid account', async test => {
-  // arrange
+	// arrange
 	test.plan(1)
 	const account = await new Accounts() // no database specified so runs in-memory
-  // act
+	// act
 	try {
 		await account.register('donchevm', 'password', 'donchevm@coventry.uk')
 	  const login = await account.login('donchevm', 'password')
-    // assert
+		// assert
 		test.is(login, true, 'unable to log in')
 	} catch(err) {
 		test.fail('error thrown')
@@ -159,9 +159,9 @@ test('DELETE : clear the database', async test => {
 	test.plan(1)
 	const account = await new Accounts()
 	try {
-    await account.register('donchevm', 'password', 'donchevm@coventry.uk')
-    const isClear = await account.delleteAll()
-    test.truthy(isClear)
+		await account.register('donchevm', 'password', 'donchevm@coventry.uk')
+		const isClear = await account.delleteAll()
+		test.truthy(isClear)
 	} catch(err) {
 		test.fail('error thrown')
 	} finally {

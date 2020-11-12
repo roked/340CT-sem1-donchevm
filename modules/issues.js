@@ -37,7 +37,7 @@ class Issues {
 	 */
 	async createIssue(issue) {
 		Object.keys(issue).forEach( key => {
-			if(issue[key] === "") throw new Error('missing info')
+			if(issue[key] === '') throw new Error('missing info')
 		})
 		let sql = `SELECT COUNT(id) as records FROM issues WHERE title="${issue.title}";`
 		const data = await this.db.get(sql)
@@ -46,7 +46,7 @@ class Issues {
             VALUES("${issue.title}", "${issue.loc}", "${issue.des}", 
                     "${issue.status}", "${issue.img}", "${issue.author}")`
 		const result = await this.db.run(sql)
-    if(!result) throw new Error("Please check again the information you entered!")
+		if(!result) throw new Error('Please check again the information you entered!')
 		return true
 	}
 
@@ -55,7 +55,7 @@ class Issues {
 	 * @returns {Object} returns all issues
 	 */
 	async getAllIssues() {
-    let sql = 'SELECT COUNT(id) as count FROM issues;'
+		let sql = 'SELECT COUNT(id) as count FROM issues;'
 		const records = await this.db.get(sql)
 		if(!records.count) throw new Error('not existing issues yet')
 		sql = 'SELECT * FROM issues;'
@@ -81,12 +81,12 @@ class Issues {
 	 * @returns {Boolean} returns true if everything is fine
 	 */
 	async updateIssue(issue) {
-    Object.keys(issue).forEach( key => {
-			if(issue[key] === "") throw new Error(`missing info ${key}`)
+		Object.keys(issue).forEach( key => {
+			if(issue[key] === '') throw new Error(`missing info ${key}`)
 		})
-    let sql = `SELECT COUNT(id) as records FROM issues WHERE id="${issue.id}";`
+		let sql = `SELECT COUNT(id) as records FROM issues WHERE id="${issue.id}";`
 		const data = await this.db.get(sql)
-    if(data.records === 0) throw new Error(`cannot update the information for issue with ID: "${issue.id}"`)
+		if(data.records === 0) throw new Error(`cannot update the information for issue with ID: "${issue.id}"`)
 	  sql = `UPDATE issues SET status="${issue.status}" WHERE id="${issue.id}";`
 		await this.db.run(sql)
 		return true
@@ -99,16 +99,16 @@ class Issues {
 	async delleteAll() {
 		let sql = 'DROP TABLE issues;'
 		await this.db.run(sql)
-    sql = 'SELECT * FROM issues;'
-    try {
-      await this.db.get(sql)
-    } catch(err) {
-      return true
-    }
-    throw new Error('Something went wrong!')
+		sql = 'SELECT * FROM issues;'
+		try {
+			await this.db.get(sql)
+		} catch(err) {
+			return true
+		}
+		throw new Error('Something went wrong!')
 	}
 
-   /**
+	/**
 	 * Close the database
 	 */
 	async close() {
