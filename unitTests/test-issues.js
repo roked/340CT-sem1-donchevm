@@ -170,10 +170,10 @@ test('GET ALL : no existing issues', async test => {
 	test.plan(1)
 	const issue = await new Issues()
 	try {
-		await issue.getAllIssues()
-		test.fail('error not thrown')
+		const result = await issue.getAllIssues()
+		test.deepEqual(result, [], 'incorrect error message')
 	} catch(err) {
-		test.is(err.message, 'not existing issues yet', 'incorrect error message')
+		test.fail('error thrown')
 	} finally {
 		issue.close()
 	}

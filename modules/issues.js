@@ -55,10 +55,7 @@ class Issues {
 	 * @returns {Object} returns all issues
 	 */
 	async getAllIssues() {
-		let sql = 'SELECT COUNT(id) as count FROM issues;'
-		const records = await this.db.get(sql)
-		if(!records.count) throw new Error('not existing issues yet')
-		sql = 'SELECT * FROM issues;'
+		const sql = 'SELECT * FROM issues;'
 		const record = await this.db.all(sql)
 		return record
 	}
