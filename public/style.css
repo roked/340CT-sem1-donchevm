@@ -47,7 +47,7 @@ figure {
 
 .login a, a:link, a:visited, a:focus, a:hover, a:active{
   color: white;
-  text-decoration:none; 
+  text-decoration:none;
   font-size: 1.25em;
   display: flex;
   text-align: center;
@@ -82,7 +82,6 @@ body {
   margin: 0;
   padding: 10px;
   font-size: 2em;
-  font-weight: 300;
   text-align: center;
   color: white;
 }
@@ -97,7 +96,7 @@ body {
 }
 .card a {
     margin: 10px auto;
-    padding-top: 10p;
+    padding-top: 10px;
     color: black;
     text-decoration: none;
     position: static;

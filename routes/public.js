@@ -31,7 +31,7 @@ router.get('/', async ctx => {
 
 		await ctx.render('index', {issues: sortedIssues, authorised: ctx.hbs.authorised, isWorker: isWorker})
 	} catch (err) {
-		await ctx.render('error', ctx.hbs)
+		console.log(err)
 	} finally {
 		issue.close()
 	}
@@ -262,9 +262,9 @@ export function getDistance(lat1, lon1, lat2, lon2) {
 	const disLat = deg2rad(lat2 - lat1) // deg2rad below
 	const disLon = deg2rad(lon2 - lon1)
 	const a =
-        Math.sin(disLat / half) * Math.sin(disLat / half) +
-        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-        Math.sin(disLon / half) * Math.sin(disLon / half)
+		Math.sin(disLat / half) * Math.sin(disLat / half) +
+		Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+		Math.sin(disLon / half) * Math.sin(disLon / half)
 
 	const c = half * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 	const distance = radius * c
