@@ -8,7 +8,7 @@
     <meta name="author" content="Mitko Donchev">
 
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400&display=swap" rel="stylesheet">
-    <link href="{{host}}/style.css" type="text/css" rel="stylesheet"/>
+    <link href="{{host}}/style.css" type="text/css" rel="stylesheet" />
 
     <script src="https://kit.fontawesome.com/8d479f3417.js" crossorigin="anonymous"></script>
 </head>
@@ -33,47 +33,47 @@
             {{#if authorised}}
                 <a href="/issue/new" class="button">New Issue</a>
             {{/if}}
-            {{#if issues}}
-                <section class="cards">
-                    {{#eachMap issues}}
-                        <article class="card">
-                            <figure class="thumbnail">
-                                <img src="uploads/{{value.img}}" alt="issue">
-                            </figure>
-                            <div class="card-content">
-                                <h2>{{value.title}}</h2>
-                                <hr>
-                                <p>Located: {{value.location}}</p>
-                                <p>Status: {{value.status}}</p>
-                                {{#if ../authorised}}
-                                    <a href="/issue/{{value.id}}" class="button">More Info</a>
-                                {{/if}}
-                            </div>
-                        </article>
-                    {{/eachMap}}
-                </section>
-            {{else}}
-                <section class="cards">
-                    <h1>Available Jobs</h1>
-                    {{#eachMap issues}}
-                        <article class="card">
-                            <figure class="thumbnail">
-                                <img src="uploads/{{value.img}}" alt="issue">
-                            </figure>
-                            <div class="card-content">
-                                <h2>{{value.title}}</h2>
-                                <hr>
-                                <p>Located: {{value.location}}</p>
-                                <p>Status: {{value.status}}</p>
-                                <p>Distance: {{key}}km</p>
-                                {{#if ../authorised}}
-                                    <a href="/issue/{{value.id}}" class="button">More Info</a>
-                                {{/if}}
-                            </div>
-                        </article>
-                    {{/eachMap}}
-                </section>
+            <section class="cards">
+                {{#eachMap issues}}
+                    <article class="card">
+                        <figure class="thumbnail">
+                            <img src="uploads/{{value.img}}" alt="issue">
+                        </figure>
+                        <div class="card-content">
+                            <h2>{{value.title}}</h2>
+                            <hr>
+                            <p>Located: {{value.location}}</p>
+                            <p>Status: {{value.status}}</p>
+                            {{#if ../authorised}}
+                                <a href="/issue/{{value.id}}" class="button">More Info</a>
+                            {{/if}}
+                        </div>
+                    </article>
+                {{/eachMap}}
+            </section>
+        {{else}}
+            <section class="cards">
+            {{#if authorised}}
+                <h1>Available Jobs</h1>
             {{/if}}
+                {{#eachMap issues}}
+                    <article class="card">
+                        <figure class="thumbnail">
+                            <img src="uploads/{{value.img}}" alt="issue">
+                        </figure>
+                        <div class="card-content">
+                            <h2>{{value.title}}</h2>
+                            <hr>
+                            <p>Located: {{value.location}}</p>
+                            <p>Status: {{value.status}}</p>
+                            <p>Distance: {{key}}km</p>
+                            {{#if ../authorised}}
+                                <a href="/issue/{{value.id}}" class="button">More Info</a>
+                            {{/if}}
+                        </div>
+                    </article>
+                {{/eachMap}}
+            </section>
         {{/unless}}
     </div>
 </main>
