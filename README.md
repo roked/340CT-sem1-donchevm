@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.com/roked/340CT-sem1-donchevm.svg?token=nmV8psp4V6ME72ugk3q1&branch=master)](https://travis-ci.com/roked/340CT-sem1-donchevm)
 
+# Warning! The website will work only for the UK residents with an UK IP address. API limitation.
+
 # Local Community Project - 340CT Assessment project
 #### - Author: Mitko Donchev
 #### - SID: 7683343
