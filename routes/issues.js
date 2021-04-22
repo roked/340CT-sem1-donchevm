@@ -9,7 +9,9 @@ import fetch from 'node-fetch'
 
 import Issues from '../modules/issues.js'
 
-const router = new Router({prefix: '/issue'})
+const router = new Router({
+	prefix: '/issue'
+})
 const dbName = 'website.db'
 
 /**
@@ -20,7 +22,7 @@ const dbName = 'website.db'
  */
 async function checkAuth(ctx, next) {
 	//check if the user is authenticated
-	if(ctx.hbs.authorised !== true) return ctx.redirect('/login')
+	if (ctx.hbs.authorised !== true) return ctx.redirect('/login')
 	await next()
 }
 
@@ -50,13 +52,13 @@ router.get('/new', async ctx => {
 router.post('/new', async ctx => {
 	const issue = await new Issues(dbName) //connect with the DB
 	try {
-		const {user} = ctx.session //get the author's name
+		const { user } = ctx.session //get the author's name
 		const image = await getFile(ctx.request.files.image) //get the image from the input
 		//get the address based on the user's current location.
 		const address = await userLocation(ctx)
-		const {title, description, status} = ctx.request.body //get all values
+		const { title, description, status } = ctx.request.body //get all values
 		//create an issue object and store everything inside
-		const issueObject = {title: title, loc: address, des: description, status: status, img: image, author: user}
+		const issueObject = { title: title, loc: address, des: description, status: status, img: image, author: user }
 		// call the create function in the issue's module
 		await issue.createIssue(issueObject).then(() => {
 			ctx.redirect('/')
@@ -78,21 +80,21 @@ router.post('/new', async ctx => {
  * @route {GET} /issue/:id
  */
 router.get('/:id', async ctx => {
-	const issue = await new Issues(dbName) 	//connect with the DB
-	const {user} = ctx.session 	//get the author's name
+	const issue = await new Issues(dbName) //connect with the DB
+	const { user } = ctx.session //get the author's name
 	//get the issue id from the request params
-	const {id} = ctx.params
+	const { id } = ctx.params
 	//check if the user is a council worker (return true or false)
-	const {isWorker} = ctx.session
+	const { isWorker } = ctx.session
 	try {
 		//call the get info function in the issue's module
 		const issueInfo = await issue.getIssue(id)
 		const isOwner = await checkOwner(user, issueInfo) //check the owner
 		//check status (returns a map)
 		const allStatus = getStatus(issueInfo)
-		await ctx.render('issue', {
-			issue: issueInfo, author: isOwner, resolving: allStatus.get('resolving'),
-			resolved: allStatus.get('resolved'), verified: allStatus.get('verified'),
+		await ctx.render('issue', { issue: issueInfo, author: isOwner, resolving: allStatus.get('resolving'),
+			resolved: allStatus.get('resolved'),
+			verified: allStatus.get('verified'),
 			isResolvedByC: allStatus.get('resolved by the council'), worker: isWorker
 		})
 	} catch (err) {
@@ -112,15 +114,15 @@ router.put('/:id', async ctx => {
 	//connect with the DB
 	const issue = await new Issues(dbName)
 	//get the issue id from the request params
-	const {id} = ctx.params
+	const { id } = ctx.params
 	//get the status from body if there is one
-	const {status} = ctx.request.body
+	const {	status	} = ctx.request.body
 	try {
 		// call the get issue function in the issue's module
 		const issueInfo = await issue.getIssue(id)
 		//change the status (if it was status resolving change to resolved)
-		issueInfo.status = status === 'resolved by the council' ? 'resolved by the council' : status === 'verified'
-			? 'verified' : issueInfo.status === 'resolving' ? 'resolved' : 'resolving'
+		issueInfo.status = status === 'resolved by the council' ? 'resolved by the council' : status === 'verified' ?
+			'verified' : issueInfo.status === 'resolving' ? 'resolved' : 'resolving'
 		// call the update issue function in the issue's module
 		await issue.updateIssue(issueInfo).then(() => {
 			ctx.redirect('/')
@@ -161,8 +163,8 @@ export async function getFile(file) {
  * @returns {Boolean} true if the owner match
  */
 export function checkOwner(user, issue) {
-	if(typeof issue !== 'object'
-     || typeof user !== 'string') throw new Error('Missing or invalid parameter')
+	if (typeof issue !== 'object' ||
+		typeof user !== 'string') throw new Error('Missing or invalid parameter')
 	return user === issue.author
 }
 
@@ -173,15 +175,15 @@ export function checkOwner(user, issue) {
  * @params {Object} ctx context
  * @returns {String} the location based on the user's current location
  */
-async function userLocation(ctx) {
+async function userLocation() {
 	try {
 		//get the client ip address from request header
-		const key = 'x-forwarded-for'
-		const ip = ctx.header[key]
+		// const key = 'x-forwarded-for'
+		// const ip = ctx.request.headers[key]
 		//get the user lat and long
-		const latLong = await getLatLong(ip)
+		// const latLong = await getLatLong(ip)
 		//get a readable address
-		return await getAddress(latLong.latitude, latLong.longitude)
+		return await getAddress('52.40828', '-1.51694')
 	} catch (err) {
 		console.log(err.message)
 	}
@@ -195,7 +197,9 @@ async function userLocation(ctx) {
  * @returns {Object} the latitude and longitude based on the user's current location
  */
 export async function getLatLong(ip) {
-	const settings = {method: 'Get'}
+	const settings = {
+		method: 'Get'
+	}
 	//fetch the data from the api and return the result
 	return await fetch(`http://ipwhois.app/json/${ip}?objects=latitude,longitude`, settings)
 		.then(res => res.json())
@@ -212,7 +216,9 @@ export async function getLatLong(ip) {
  */
 export async function getAddress(lat, long) {
 	try {
-		const settings = {method: 'Get'} //method 'get'
+		const settings = {
+			method: 'Get'
+		} //method 'get'
 		//fetch the data from the api and return the result
 		return await fetch(`http://api.postcodes.io/postcodes?lon=${long}&lat=${lat}`, settings)
 			.then(res => res.json())
@@ -230,7 +236,7 @@ export async function getAddress(lat, long) {
  * @returns {Object} map of activated (and skiped) statuses
  */
 export function getStatus(issue) {
-	if(typeof issue !== 'object') throw new Error('No issue provided')
+	if (typeof issue !== 'object') throw new Error('No issue provided')
 	const allStatus = ['resolving', 'resolved', 'verified', 'resolved by the council']
 	const statuses = new Map() // create a map to store the statuses
 
