@@ -52,26 +52,13 @@ router.get('/new', async ctx => {
 router.post('/new', async ctx => {
 	const issue = await new Issues(dbName) //connect with the DB
 	try {
-		const {
-			user
-		} = ctx.session //get the author's name
+		const { user } = ctx.session //get the author's name
 		const image = await getFile(ctx.request.files.image) //get the image from the input
 		//get the address based on the user's current location.
 		const address = await userLocation(ctx)
-		const {
-			title,
-			description,
-			status
-		} = ctx.request.body //get all values
+		const { title, description, status } = ctx.request.body //get all values
 		//create an issue object and store everything inside
-		const issueObject = {
-			title: title,
-			loc: address,
-			des: description,
-			status: status,
-			img: image,
-			author: user
-		}
+		const issueObject = { title: title, loc: address, des: description, status: status, img: image, author: user }
 		// call the create function in the issue's module
 		await issue.createIssue(issueObject).then(() => {
 			ctx.redirect('/')
@@ -94,31 +81,21 @@ router.post('/new', async ctx => {
  */
 router.get('/:id', async ctx => {
 	const issue = await new Issues(dbName) //connect with the DB
-	const {
-		user
-	} = ctx.session //get the author's name
+	const { user } = ctx.session //get the author's name
 	//get the issue id from the request params
-	const {
-		id
-	} = ctx.params
+	const { id } = ctx.params
 	//check if the user is a council worker (return true or false)
-	const {
-		isWorker
-	} = ctx.session
+	const { isWorker } = ctx.session
 	try {
 		//call the get info function in the issue's module
 		const issueInfo = await issue.getIssue(id)
 		const isOwner = await checkOwner(user, issueInfo) //check the owner
 		//check status (returns a map)
 		const allStatus = getStatus(issueInfo)
-		await ctx.render('issue', {
-			issue: issueInfo,
-			author: isOwner,
-			resolving: allStatus.get('resolving'),
+		await ctx.render('issue', { issue: issueInfo, author: isOwner, resolving: allStatus.get('resolving'),
 			resolved: allStatus.get('resolved'),
 			verified: allStatus.get('verified'),
-			isResolvedByC: allStatus.get('resolved by the council'),
-			worker: isWorker
+			isResolvedByC: allStatus.get('resolved by the council'), worker: isWorker
 		})
 	} catch (err) {
 		await ctx.redirect('/')
@@ -137,13 +114,9 @@ router.put('/:id', async ctx => {
 	//connect with the DB
 	const issue = await new Issues(dbName)
 	//get the issue id from the request params
-	const {
-		id
-	} = ctx.params
+	const { id } = ctx.params
 	//get the status from body if there is one
-	const {
-		status
-	} = ctx.request.body
+	const {	status	} = ctx.request.body
 	try {
 		// call the get issue function in the issue's module
 		const issueInfo = await issue.getIssue(id)
@@ -202,15 +175,15 @@ export function checkOwner(user, issue) {
  * @params {Object} ctx context
  * @returns {String} the location based on the user's current location
  */
-async function userLocation(ctx) {
+async function userLocation() {
 	try {
 		//get the client ip address from request header
-		const key = 'x-forwarded-for'
-		const ip = ctx.request.headers[key]
+		// const key = 'x-forwarded-for'
+		// const ip = ctx.request.headers[key]
 		//get the user lat and long
-		const latLong = await getLatLong(ip)
+		// const latLong = await getLatLong(ip)
 		//get a readable address
-		return await getAddress("52.40828", "-1.51694")
+		return await getAddress('52.40828', '-1.51694')
 	} catch (err) {
 		console.log(err.message)
 	}

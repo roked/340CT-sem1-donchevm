@@ -62,4 +62,4 @@ app.use(router.routes())
 app.use(router.allowedMethods())
 
 //run server
-app.listen(port, async () => console.log(`listening on port ${port}`))
+app.listen(port, async() => console.log(`listening on port ${port}`))
